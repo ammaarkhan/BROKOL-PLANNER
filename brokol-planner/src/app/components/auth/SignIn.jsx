@@ -38,7 +38,7 @@ const SignIn = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         ></input>
-        <button type="submit">Log In</button>
+        <button type="submit" className="bg-black text-white py-2 px-4 rounded-lg">Login</button>
       </form>
     </div>
   );
