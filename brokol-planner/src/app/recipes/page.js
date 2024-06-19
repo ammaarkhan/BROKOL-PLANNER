@@ -1,44 +1,82 @@
 "use client";
 
-import { StreamableValue, useStreamableValue } from "ai/rsc";
-import { useState } from "react";
-import { generateRecipes } from "./actions";
-import { PartialRecipe } from "./schema";
+import { useState, useEffect } from "react";
+import { generate } from "./actions";
+import { readStreamableValue } from "ai/rsc";
 
 // Force the page to be dynamic and allow streaming responses up to 30 seconds
 export const dynamic = "force-dynamic";
-export const maxDuration = 120;
+export const maxDuration = 60;
 
-export default function Page() {
-  const [recipeStream, setRecipeStream] = useState();
+export default function Home() {
+  const [outputText, setOutputText] = useState("");
+  const [recipeList, setRecipeList] = useState([]);
+
+  useEffect(() => {
+    console.log("Updated recipe list:", recipeList);
+  }, [recipeList]);
 
   return (
-    <div className="flex flex-col items-center min-h-screen p-4 m-4">
+    <div>
       <button
-        className="px-4 py-2 mt-4 text-white bg-blue-500 rounded-md"
         onClick={async () => {
-          const generatedRecipes = await generateRecipes(
-            "Easy, simple recipes for beginners"
+          const { output } = await generate(
+            `Output 3 recipes that are quick and easy to make. Return each recipe as a separate JSON object on a new line in the following format:
+            {
+              "recipe": {
+                "name": "string",
+                "prepTime": "string",
+                "effort": "string",
+                "ingredients": [
+                  {
+                    "name": "string",
+                    "amount": "string"
+                  }
+                ],
+                "steps": [
+                  "string"
+                ]
+              }
+            }`
           );
-          console.log("Generated Recipes:", generatedRecipes);
-          setRecipeStream(generatedRecipes);
+
+          let accumulatedOutput = "";
+          let partialOutput = "";
+
+          for await (const chunk of readStreamableValue(output)) {
+            accumulatedOutput += chunk;
+            partialOutput += chunk;
+
+            try {
+              const parsedRecipe = JSON.parse(partialOutput);
+              console.log("Parsed recipe:", parsedRecipe);
+
+              setRecipeList((prevRecipeList) => [
+                ...prevRecipeList,
+                parsedRecipe,
+              ]);
+
+              partialOutput = "";
+            } catch (error) {
+              // Ignore parsing errors until the data is fully accumulated
+            }
+
+            setOutputText(accumulatedOutput);
+          }
         }}
       >
-        Generate Recipes
+        Ask
       </button>
-
-      {recipeStream && <RecipesView recipeStream={recipeStream} />}
+      {recipeList.length > 0 && <RecipesView recipeStream={recipeList} />}
+      {/* <div>{outputText}</div> */}
     </div>
   );
 }
 
-// separate component to display recipes that received the streamable value:
 function RecipesView({ recipeStream }) {
-  const [data, pending, error] = useStreamableValue(recipeStream);
-  console.log("Number of recipes:", data?.recipes?.length);
   return (
     <div className="flex flex-col gap-4 mt-4">
-      {data?.recipes?.map((recipeData, index) => (
+      {recipeStream.map((recipeData, index) => (
         <div
           className="flex flex-col gap-4 p-4 bg-gray-100 rounded-md dark:bg-gray-800"
           key={index}

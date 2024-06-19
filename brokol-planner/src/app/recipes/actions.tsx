@@ -1,30 +1,25 @@
 'use server';
 
+import { streamText } from 'ai';
 import { openai } from '@ai-sdk/openai';
-import { streamObject } from 'ai';
 import { createStreamableValue } from 'ai/rsc';
-import { PartialRecipe, recipeSchema } from './schema'
 
-export async function generateRecipes(context: string) {
-    const recipesStream = createStreamableValue<PartialRecipe>();
+export async function generate(input: string) {
+    'use server';
 
-    streamObject({
-        model: openai('gpt-4-turbo'),
-        system: 'You generate complete recipes for a meal planning app.',
-        prompt: `Generate 4 recipes with this information: ${context}. You need to generate 4 recipes please!`,
-        // prompt: 'give me 20 dish names that are easy to make and healthy',
-        // prompt: 'generate recipes for greek yogurt parfait, roasted beet and quinoa salad and asian cucumber salad. reply in JSON format',
-        schema: recipeSchema,
-    })
-        .then(async ({ partialObjectStream }) => {
-            for await (const partialObject of partialObjectStream) {
-                recipesStream.update(partialObject);
-            }
-        })
-        .finally(() => {
-            console.log('done');
-            recipesStream.done();
+    const stream = createStreamableValue('');
+
+    (async () => {
+        const { textStream } = await streamText({
+            model: openai('gpt-3.5-turbo'),
+            prompt: input,
         });
 
-    return recipesStream.value;
+        for await (const delta of textStream) {
+            stream.update(delta);
+        }
+        stream.done();
+    })();
+
+    return { output: stream.value };
 }
