@@ -15,7 +15,7 @@ const SignIn = () => {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         console.log(userCredential);
-        router.push("/recipes");
+        router.push("/input");
       })
       .catch((error) => {
         console.log(error);
