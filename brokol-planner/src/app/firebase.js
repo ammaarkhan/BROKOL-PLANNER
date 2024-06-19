@@ -8,17 +8,25 @@ import { getAnalytics } from "firebase/analytics";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyBp666x0Sntuu4JZhUNU64sK_TCeUfnyXg",
-  authDomain: "brokol-planner-97189.firebaseapp.com",
-  projectId: "brokol-planner-97189",
-  storageBucket: "brokol-planner-97189.appspot.com",
-  messagingSenderId: "796599635208",
-  appId: "1:796599635208:web:f0e012708d9860704c30bd",
-  measurementId: "G-L3Y219R29X"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 //(shin) do I need database url? check the website in line 6
+let app;
+let auth;
 
+if (typeof window !== "undefined") {
+  app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+}
+
+export { auth };
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+/* const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
-export const auth = getAuth(app);
+export const auth = getAuth(app); */
