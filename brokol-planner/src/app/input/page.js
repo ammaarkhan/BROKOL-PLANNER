@@ -7,7 +7,6 @@ export default function Input() {
     <main className="flex flex-col items-center justify-center h-screen">
       <h1 className="text-4xl mb-4">Meal Planner</h1>
       <SignIn/>
-      <AuthDetails/>
       {/* <Link href="/recipes">Recipe page</Link> */}
     </main>
   );

@@ -25,20 +25,28 @@ const SignIn = () => {
   return (
     <div className="sign-in-container">
       <form onSubmit={signIn}>
-        <h1>Log In to your Account</h1>
+        <div className = "flex justify-center">
+          <h1>Login to your Account</h1>
+        </div>
+        
         <input
           type="email"
           placeholder="Enter your email"
+          className = "pl-3 border border-gray-300 mt-2 block w-full rounded-md shadow-sm"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         ></input>
         <input
           type="password"
           placeholder="Enter your password"
+          className = "pl-3 border border-gray-300 mt-2 block w-full rounded-md shadow-sm"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         ></input>
-        <button type="submit" className="bg-black text-white py-2 px-4 rounded-lg">Login</button>
+        <div className = "flex justify-center mt-2">
+          <button type="submit" className="bg-black text-white py-2 px-4 rounded-lg mt-2">Login</button>
+        </div>
+        
       </form>
     </div>
   );
