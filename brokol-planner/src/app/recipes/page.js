@@ -8,9 +8,81 @@ import { readStreamableValue } from "ai/rsc";
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
-export default function Home() {
+export default function Recipes({ searchParams }) {
+  const {
+    mealsPerDay,
+    daysPerWeek,
+    prepTime,
+    servingsPerMeal,
+    dietaryPreferences,
+    skillLevel,
+  } = searchParams;
+
+  const mealsPerWeek = mealsPerDay * daysPerWeek;
+
   const [outputText, setOutputText] = useState("");
   const [recipeList, setRecipeList] = useState([]);
+
+  const prompt = `
+  Output ${mealsPerWeek} recipes. Assume I have have no precooked items. Give realistic preparation times please and don't output the same recipe twice. Consider the following preferences:
+    - Prep time: ${prepTime} minutes
+    - Portions needed per meal: ${servingsPerMeal}
+    - Dietary preferences: ${dietaryPreferences}
+    - Skill level: ${skillLevel}
+    Return each recipe as a separate JSON object on a new line in the format below. Output the prepTime in minutes.
+    {
+        "recipe": {
+        "name": "string",
+        "prepTime": "string",
+        "effort": "string",
+        "ingredients": [
+            {
+            "name": "string",
+            "amount": "string"
+            }
+        ],
+        "steps": [
+            "string"
+        ]
+        }
+    }`;
+
+  //   console.log("Meals per week:", mealsPerWeek);
+  //   console.log("Meals per day:", mealsPerDay);
+  //   console.log("Days per week:", daysPerWeek);
+  //   console.log("Prep time:", prepTime);
+  //   console.log("Servings per meal:", servingsPerMeal);
+  //   console.log("Dietary preferences:", dietaryPreferences);
+  //   console.log("Skill level:", skillLevel);
+
+  useEffect(() => {
+    const fetchRecipes = async () => {
+      const { output } = await generate(prompt);
+
+      let accumulatedOutput = "";
+      let partialOutput = "";
+
+      for await (const chunk of readStreamableValue(output)) {
+        accumulatedOutput += chunk;
+        partialOutput += chunk;
+
+        try {
+          const parsedRecipe = JSON.parse(partialOutput);
+          console.log("Parsed recipe:", parsedRecipe);
+
+          setRecipeList((prevRecipeList) => [...prevRecipeList, parsedRecipe]);
+
+          partialOutput = "";
+        } catch (error) {
+          // Ignore parsing errors until the data is fully accumulated
+        }
+
+        setOutputText(accumulatedOutput);
+      }
+    };
+
+    fetchRecipes();
+  }, []);
 
   useEffect(() => {
     console.log("Updated recipe list:", recipeList);
@@ -18,55 +90,6 @@ export default function Home() {
 
   return (
     <div>
-      <button
-        onClick={async () => {
-          const { output } = await generate(
-            `Output 3 recipes that are quick and easy to make. Return each recipe as a separate JSON object on a new line in the following format:
-            {
-              "recipe": {
-                "name": "string",
-                "prepTime": "string",
-                "effort": "string",
-                "ingredients": [
-                  {
-                    "name": "string",
-                    "amount": "string"
-                  }
-                ],
-                "steps": [
-                  "string"
-                ]
-              }
-            }`
-          );
-
-          let accumulatedOutput = "";
-          let partialOutput = "";
-
-          for await (const chunk of readStreamableValue(output)) {
-            accumulatedOutput += chunk;
-            partialOutput += chunk;
-
-            try {
-              const parsedRecipe = JSON.parse(partialOutput);
-              console.log("Parsed recipe:", parsedRecipe);
-
-              setRecipeList((prevRecipeList) => [
-                ...prevRecipeList,
-                parsedRecipe,
-              ]);
-
-              partialOutput = "";
-            } catch (error) {
-              // Ignore parsing errors until the data is fully accumulated
-            }
-
-            setOutputText(accumulatedOutput);
-          }
-        }}
-      >
-        Ask
-      </button>
       {recipeList.length > 0 && <RecipesView recipeStream={recipeList} />}
       {/* <div>{outputText}</div> */}
     </div>
@@ -75,23 +98,23 @@ export default function Home() {
 
 function RecipesView({ recipeStream }) {
   return (
-    <div className="flex flex-col gap-4 mt-4">
+    <div className="flex flex-col gap-4 mt-4 max-w-4xl mx-auto">
       {recipeStream.map((recipeData, index) => (
         <div
-          className="flex flex-col gap-4 p-4 bg-gray-100 rounded-md dark:bg-gray-800"
+          className="flex flex-col gap-4 p-4 bg-white border rounded-md shadow-sm"
           key={index}
         >
           <div className="flex-1 space-y-2">
-            <div className="flex items-center justify-between">
-              <p className="font-medium text-lg">{recipeData.recipe?.name}</p>
-              <p className="font-medium text-md">
-                {recipeData.recipe?.prepTime}
+            <div className="flex items-center justify-between mb-2">
+              <p className="font-bold text-lg">{recipeData.recipe?.name}</p>
+              <p className="font-medium text-md flex items-center">
+                Preparation Time: {recipeData.recipe?.prepTime} | Effort:{" "}
+                {recipeData.recipe?.effort}
               </p>
-              <p className="font-medium text-md">{recipeData.recipe?.effort}</p>
             </div>
             <div>
-              <p className="font-medium">Ingredients:</p>
-              <ul className="list-disc list-inside text-gray-700 dark:text-gray-300">
+              <p className="font-bold mb-1">Ingredients:</p>
+              <ul className="list-disc list-inside text-gray-700">
                 {recipeData.recipe?.ingredients?.map((ingredient, idx) => (
                   <li key={idx}>
                     {ingredient?.amount} {ingredient?.name}
@@ -100,8 +123,8 @@ function RecipesView({ recipeStream }) {
               </ul>
             </div>
             <div>
-              <p className="font-medium">Steps:</p>
-              <ol className="list-decimal list-inside text-gray-700 dark:text-gray-300">
+              <p className="font-bold mb-1">Recipe:</p>
+              <ol className="list-decimal list-inside text-gray-700">
                 {recipeData.recipe?.steps?.map((step, idx) => (
                   <li key={idx}>{step}</li>
                 ))}

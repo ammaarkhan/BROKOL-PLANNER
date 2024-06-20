@@ -1,15 +1,16 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import Link from "next/link";
 
 const Layout = () => {
   const [formData, setFormData] = useState({
-    mealsPerDay: '',
-    daysPerWeek: '',
-    prepTime: '',
-    servingsPerMeal: '',
-    dietaryPreferences: '',
-    skillLevel: ''
+    mealsPerDay: "",
+    daysPerWeek: "",
+    prepTime: "",
+    servingsPerMeal: "",
+    dietaryPreferences: "",
+    skillLevel: "",
   });
 
   const handleChange = (e) => {
@@ -19,13 +20,12 @@ const Layout = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formData);
-    // Handle form submission logic here
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-white">
-      <form onSubmit={handleSubmit} className="bg-white p-8 w-full max-w-3xl">{/*to show the border shadow, use shadow-md*/}
+      <form onSubmit={handleSubmit} className="bg-white p-8 w-full max-w-3xl">
+        {/*to show the border shadow, use shadow-md*/}
         <h1 className="text-2xl font-bold mb-6 text-center">Meal Planner</h1>
         <div className="grid grid-cols-2 gap-6">
           <div>
@@ -42,7 +42,9 @@ const Layout = () => {
             </label>
 
             <label className="block mb-4">
-              <span className="font-bold">2. How many days a week do you cook?</span>
+              <span className="font-bold">
+                2. How many days a week do you cook?
+              </span>
               <input
                 type="number"
                 name="daysPerWeek"
@@ -54,7 +56,9 @@ const Layout = () => {
             </label>
 
             <label className="block mb-4">
-              <span className="font-bold">3. How much time can you spend on meal preparation? (in minutes)</span>
+              <span className="font-bold">
+                3. How much time can you spend on meal preparation? (in minutes)
+              </span>
               <input
                 type="number"
                 name="prepTime"
@@ -80,7 +84,9 @@ const Layout = () => {
 
           <div>
             <label className="block mb-4">
-              <span className="font-bold">5. What are your dietary preferences?</span>
+              <span className="font-bold">
+                5. What are your dietary preferences?
+              </span>
               <textarea
                 type="text"
                 name="dietaryPreferences"
@@ -92,14 +98,16 @@ const Layout = () => {
             </label>
 
             <div className="block mb-4">
-              <span className="font-bold">6. What is your cooking skill level?</span>
+              <span className="font-bold">
+                6. What is your cooking skill level?
+              </span>
               <div className="mt-2 flex flex-col">
                 <label className="inline-flex items-center ml-5 mb-2">
                   <input
                     type="radio"
                     name="skillLevel"
                     value="Beginner"
-                    checked={formData.skillLevel === 'Beginner'}
+                    checked={formData.skillLevel === "Beginner"}
                     onChange={handleChange}
                     className="form-radio"
                   />
@@ -110,7 +118,7 @@ const Layout = () => {
                     type="radio"
                     name="skillLevel"
                     value="Intermediate"
-                    checked={formData.skillLevel === 'Intermediate'}
+                    checked={formData.skillLevel === "Intermediate"}
                     onChange={handleChange}
                     className="form-radio"
                   />
@@ -121,7 +129,7 @@ const Layout = () => {
                     type="radio"
                     name="skillLevel"
                     value="Advanced"
-                    checked={formData.skillLevel === 'Advanced'}
+                    checked={formData.skillLevel === "Advanced"}
                     onChange={handleChange}
                     className="form-radio"
                   />
@@ -132,8 +140,18 @@ const Layout = () => {
           </div>
         </div>
         <div className="flex justify-center mt-6">
-          <button type="submit" className="mt-6 py-2 px-4 bg-black text-white font-semibold rounded-md shadow-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-            Submit
+          <button
+            type="submit"
+            className="mt-6 py-2 px-4 bg-black text-white font-semibold rounded-md shadow-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            <Link
+              href={{
+                pathname: "/recipes",
+                query: formData,
+              }}
+            >
+              Submit
+            </Link>
           </button>
         </div>
       </form>
