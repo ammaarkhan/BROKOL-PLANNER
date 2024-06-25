@@ -5,7 +5,7 @@ import { auth } from "../../config/firebase";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-const withAuth = (Component) => {
+export default function withAuth(Component) {
   return (props) => {
     const [user, loading, error] = useAuthState(auth);
     const router = useRouter();
@@ -27,6 +27,4 @@ const withAuth = (Component) => {
 
     return user ? <Component {...props} /> : null;
   };
-};
-
-export default withAuth;
+}
