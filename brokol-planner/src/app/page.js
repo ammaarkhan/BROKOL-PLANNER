@@ -14,7 +14,6 @@ export default function Home() {
     e.preventDefault();
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        console.log(userCredential);
         router.push("/input");
       })
       .catch((error) => {
