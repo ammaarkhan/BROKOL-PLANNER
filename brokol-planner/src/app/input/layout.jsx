@@ -3,8 +3,6 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import withAuth from "../firebase/withAuth";
-import { auth } from "../../config/firebase";
-import { signOut } from "firebase/auth";
 
 const Layout = () => {
   const [formData, setFormData] = useState({
@@ -27,7 +25,6 @@ const Layout = () => {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-white">
-      {/* <button onClick={() => signOut(auth)}>Log out</button> */}
       <form onSubmit={handleSubmit} className="bg-white p-8 w-full max-w-3xl">
         {/*to show the border shadow, use shadow-md*/}
         <h1 className="text-2xl font-bold mb-6 text-center">Meal Planner</h1>
