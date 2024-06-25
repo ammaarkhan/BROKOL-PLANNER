@@ -2,7 +2,7 @@
 
 import { signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
-import { auth } from "./firebase";
+import { auth } from "../config/firebase";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
