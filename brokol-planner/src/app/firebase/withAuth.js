@@ -1,30 +1,24 @@
 "use client";
 
-import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../../config/firebase";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { onAuthStateChanged } from "firebase/auth";
 
 export default function withAuth(Component) {
-  return (props) => {
-    const [user, loading, error] = useAuthState(auth);
+  return function AuthComponent(props) {
     const router = useRouter();
 
     useEffect(() => {
-      if (!loading && !user) {
-        router.push("/");
-      }
-    }, [user, loading, router]);
+      const unsub = onAuthStateChanged(auth, (user) => {
+        if (!user) {
+          router.push("/");
+        }
+      });
 
-    if (loading) {
-      return <p>Loading...</p>;
-    }
+      return () => unsub();
+    }, [router]);
 
-    if (error) {
-      console.error("Authentication error:", error);
-      return <p>Error loading user data.</p>;
-    }
-
-    return user ? <Component {...props} /> : null;
+    return <Component {...props} />;
   };
 }
