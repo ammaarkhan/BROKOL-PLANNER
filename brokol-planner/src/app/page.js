@@ -17,6 +17,7 @@ export default function Home() {
         router.push("/input");
       })
       .catch((error) => {
+        // SHIN TODO: Add error handling for wrong password
         console.log(error);
       });
   };
