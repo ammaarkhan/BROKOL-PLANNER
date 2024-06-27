@@ -189,7 +189,7 @@ export default function Recipes({ searchParams }) {
               className="bg-black text-white py-2 px-4 rounded-lg"
               onClick={saveMeals}
             >
-              &rarr; Save Meal Plan
+              Save Meal Plan
             </button>
           </div>
         </>
