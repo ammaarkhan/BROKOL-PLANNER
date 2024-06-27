@@ -15,7 +15,7 @@ export default function Home() {
     e.preventDefault();
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        router.push("/Homepage");
+        router.push("/homepage");
       })
       .catch((error) => {
         setError("Incorrect password. Please try again.");
@@ -30,7 +30,7 @@ export default function Home() {
         <div className="flex justify-center">
           <h1>Login to your Account</h1>
         </div>
-        
+
         <input
           type="email"
           placeholder="Enter your email"
