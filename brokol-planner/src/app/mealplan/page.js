@@ -1,0 +1,125 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { db } from "../../config/firebase";
+import { collection, query, orderBy, limit, getDocs } from "firebase/firestore";
+import Link from "next/link";
+
+export default function MealPlan() {
+  const [recipeList, setRecipeList] = useState([]);
+  const [shoppingList, setShoppingList] = useState([]);
+  const [uid, setUid] = useState(null);
+
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUid(user.uid);
+      } else {
+        // User is signed out
+        setUid(null);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const fetchLatestMealPlan = async (uid) => {
+      if (!uid) return;
+
+      try {
+        const mealPlansRef = collection(db, `users/${uid}/mealPlans`);
+        const q = query(mealPlansRef, orderBy("dateAdded", "desc"), limit(1));
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+          const latestMealPlan = querySnapshot.docs[0].data();
+          setRecipeList(latestMealPlan.recipes);
+          setShoppingList(latestMealPlan.shoppingList || []);
+        } else {
+          console.log("No meal plans found");
+        }
+      } catch (error) {
+        console.error("Error fetching latest meal plan:", error);
+      }
+    };
+
+    if (uid) {
+      fetchLatestMealPlan(uid);
+    }
+  }, [uid]);
+
+  return (
+    <div className="flex flex-col items-center my-4">
+      <button className="absolute left-4 bg-black text-white py-2 px-4 rounded-lg">
+        <Link href="/input">Back</Link>
+      </button>
+      <h1 className="text-4xl mb-4 font-bold text-center mt-10">
+        Current Meal Plan
+      </h1>
+      {recipeList.length > 0 ? (
+        <div className="flex w-full max-w-6xl">
+          <div className="w-4/6 pr-4">
+            <RecipesView recipeStream={recipeList} />
+          </div>
+          <div className="w-2/6 pl-4">
+            {shoppingList.length > 0 && (
+              <div className="mt-4 bg-gray-200 rounded-xl px-4 py-4">
+                <h2 className="text-3xl mb-4 font-bold">Grocery List</h2>
+                <ul className="list-disc list-inside text-gray-700">
+                  {shoppingList.map((item, index) => (
+                    <li key={index}>
+                      {item.amount} {item.name}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </div>
+      ) : (
+        <p>No meal plan found.</p>
+      )}
+    </div>
+  );
+}
+
+function RecipesView({ recipeStream }) {
+  return (
+    <div className="flex flex-col gap-4 mt-4 max-w-4xl mx-auto">
+      {recipeStream.map((recipeData, index) => (
+        <div
+          className="flex flex-col gap-4 p-4 bg-white border-2 border-black rounded-xl shadow-sm"
+          key={index}
+        >
+          <div className="flex-1 space-y-2">
+            <p className="font-bold text-lg">{recipeData.recipe?.name}</p>
+            <p className="font-medium text-md inline-block bg-gray-200 rounded-md px-3 py-1 mb-2">
+              Preparation Time: {recipeData.recipe?.prepTime} | Effort:{" "}
+              {recipeData.recipe?.effort}
+            </p>
+            <div>
+              <p className="font-bold mb-1">Ingredients:</p>
+              <ul className="list-disc list-inside text-gray-700">
+                {recipeData.recipe?.ingredients?.map((ingredient, idx) => (
+                  <li key={idx}>
+                    {ingredient?.amount} {ingredient?.name}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <p className="font-bold mb-1">Recipe:</p>
+              <ol className="list-decimal list-inside text-gray-700">
+                {recipeData.recipe?.steps?.map((step, idx) => (
+                  <li key={idx}>{step}</li>
+                ))}
+              </ol>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
