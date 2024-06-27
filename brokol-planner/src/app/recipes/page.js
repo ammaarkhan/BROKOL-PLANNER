@@ -195,7 +195,7 @@ export default function Recipes({ searchParams }) {
         </>
       ) : (
         <p className="flex justify-center text-lg mt-10">
-          Recipes loading... I promise I don&apost take too long :)
+          Recipes loading... I promise I do not take too long :)
         </p>
       )}
     </div>
