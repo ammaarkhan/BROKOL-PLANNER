@@ -12,13 +12,14 @@
     "@ai-sdk/openai": "^0.0.31",
     "@ai-sdk/react": "^0.0.3",
     "ai": "^3.1.37",
-    "esrun": "^3.2.26",
     "autoprefixer": "^10.4.19",
+    "esrun": "^3.2.26",
     "firebase": "^10.12.2",
     "next": "14.2.4",
     "next-auth": "^4.24.7",
     "react": "^18",
     "react-dom": "^18",
+    "react-firebase-hooks": "^5.1.1",
     "zod": "^3.23.8"
   },
   "devDependencies": {
