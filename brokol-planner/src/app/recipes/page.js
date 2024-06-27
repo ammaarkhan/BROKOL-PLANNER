@@ -31,6 +31,8 @@ function Recipes({ searchParams }) {
   const [recipeList, setRecipeList] = useState([]);
   const [recipeNames, setRecipeNames] = useState([]);
   const [uid, setUid] = useState(null);
+  const [moreRecipesLoading, setMoreRecipesLoading] = useState(false);
+  const [mealPlanLoading, setMealPlanLoading] = useState(false);
 
   const prompt = `
   Output ${mealsPerWeek} recipes. Assume I have have no precooked items. Give realistic preparation times please and don't output the same recipe twice. Consider the following preferences:
@@ -112,27 +114,29 @@ function Recipes({ searchParams }) {
   }, []);
 
   const moreRecipes = async () => {
-    const { output } = await generate(promptTwo);
+    setMoreRecipesLoading(true);
+    try {
+      const { output } = await generate(promptTwo);
 
-    let accumulatedOutput = "";
-    let partialOutput = "";
+      let accumulatedOutput = "";
+      let partialOutput = "";
 
-    for await (const chunk of readStreamableValue(output)) {
-      accumulatedOutput += chunk;
-      partialOutput += chunk;
+      for await (const chunk of readStreamableValue(output)) {
+        accumulatedOutput += chunk;
+        partialOutput += chunk;
 
-      try {
-        const parsedRecipe = JSON.parse(partialOutput);
-        //   console.log("Parsed recipe:", parsedRecipe);
+        try {
+          const parsedRecipe = JSON.parse(partialOutput);
+          setRecipeList((prevRecipeList) => [...prevRecipeList, parsedRecipe]);
+          partialOutput = "";
+        } catch (error) {
+          // Ignore parsing errors until the data is fully accumulated
+        }
 
-        setRecipeList((prevRecipeList) => [...prevRecipeList, parsedRecipe]);
-
-        partialOutput = "";
-      } catch (error) {
-        // Ignore parsing errors until the data is fully accumulated
+        setOutputText(accumulatedOutput);
       }
-
-      setOutputText(accumulatedOutput);
+    } finally {
+      setMoreRecipesLoading(false);
     }
   };
 
@@ -158,15 +162,18 @@ function Recipes({ searchParams }) {
   }, [recipeList]);
 
   const saveMeals = async () => {
+    setMealPlanLoading(true);
     try {
       const mealPlanId = await saveMealPlanMetadata(uid);
       router.push("/mealplan");
 
       // Save the recipes and shopping list asynchronously
-      saveRecipesAndShoppingList(uid, mealPlanId, recipeList);
+      await saveRecipesAndShoppingList(uid, mealPlanId, recipeList);
     } catch (error) {
       console.error("Error saving meal plan:", error);
       alert("Failed to save meal plan.");
+    } finally {
+      setMealPlanLoading(false);
     }
   };
 
@@ -182,20 +189,32 @@ function Recipes({ searchParams }) {
       {recipeList.length > 0 ? (
         <>
           <RecipesView recipeStream={recipeList} removeRecipe={removeRecipe} />
-          <div className="flex justify-center gap-4 my-4">
-            <button
-              className="bg-black text-white py-2 px-4 rounded-lg"
-              onClick={moreRecipes}
-            >
-              + More Recipes!
-            </button>
-            <button
-              className="bg-black text-white py-2 px-4 rounded-lg"
-              onClick={saveMeals}
-            >
-              &rarr; Save Meal Plan
-            </button>
-          </div>
+          {moreRecipesLoading && (
+            <p className="flex justify-center text-md mt-3">
+              More recipes loading... lemme see what i can find for you :)
+            </p>
+          )}
+          {mealPlanLoading ? (
+            <div className="text-center my-4">
+              Generating meal plan... give me a sec - its my first day on the
+              job!
+            </div>
+          ) : (
+            <div className="flex justify-center gap-4 my-4">
+              <button
+                className="bg-black text-white py-2 px-4 rounded-lg"
+                onClick={moreRecipes}
+              >
+                + More Recipes!
+              </button>
+              <button
+                className="bg-black text-white py-2 px-4 rounded-lg"
+                onClick={saveMeals}
+              >
+                &rarr; Save Meal Plan
+              </button>
+            </div>
+          )}
         </>
       ) : (
         <p className="flex justify-center text-lg mt-10">
