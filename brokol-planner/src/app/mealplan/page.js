@@ -5,8 +5,9 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { db } from "../../config/firebase";
 import { collection, query, orderBy, limit, getDocs } from "firebase/firestore";
 import Link from "next/link";
+import withAuth from "../firebase/withAuth";
 
-export default function MealPlan() {
+function MealPlan() {
   const [recipeList, setRecipeList] = useState([]);
   const [shoppingList, setShoppingList] = useState([]);
   const [uid, setUid] = useState(null);
@@ -53,7 +54,7 @@ export default function MealPlan() {
   return (
     <div className="flex flex-col items-center my-4">
       <button className="absolute left-4 bg-black text-white py-2 px-4 rounded-lg">
-        <Link href="/input">Back</Link>
+        <Link href="/home">Back</Link>
       </button>
       <h1 className="text-4xl mb-4 font-bold text-center mt-10">
         Current Meal Plan
@@ -123,3 +124,5 @@ function RecipesView({ recipeStream }) {
     </div>
   );
 }
+
+export default withAuth(MealPlan);
