@@ -6,18 +6,20 @@ import { readStreamableValue } from "ai/rsc";
 import { saveMealPlanMetadata, saveRecipesAndShoppingList } from "../db";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import withAuth from "../firebase/withAuth";
 
 // Force the page to be dynamic and allow streaming responses up to 30 seconds
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
-export default function Recipes({ searchParams }) {
+function Recipes({ searchParams }) {
   const {
     mealsPerDay,
     daysPerWeek,
     prepTime,
     servingsPerMeal,
     dietaryPreferences,
+    weeklyFeeling,
     skillLevel,
   } = searchParams;
 
@@ -35,6 +37,7 @@ export default function Recipes({ searchParams }) {
     - Prep time: ${prepTime} minutes
     - Portions needed per meal: ${servingsPerMeal}
     - Dietary preferences: ${dietaryPreferences}
+    - Weekly feeling: ${weeklyFeeling}
     - Skill level: ${skillLevel}
     Return each recipe as a separate JSON object on a new line in the format below. Output the prepTime in minutes.
     {
@@ -59,6 +62,7 @@ export default function Recipes({ searchParams }) {
     - Prep time: ${prepTime} minutes
     - Portions needed per meal: ${servingsPerMeal}
     - Dietary preferences: ${dietaryPreferences}
+    - Weekly feeling: ${weeklyFeeling}
     - Skill level: ${skillLevel}
     Return each recipe as a separate JSON object on a new line in the format below. Output the prepTime in minutes.
     {
@@ -248,3 +252,5 @@ function RecipesView({ recipeStream, removeRecipe }) {
     </div>
   );
 }
+
+export default withAuth(Recipes);
