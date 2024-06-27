@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 export default function Home() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(null); // Add state for error message
   const router = useRouter();
 
   const signIn = (e) => {
@@ -17,7 +18,7 @@ export default function Home() {
         router.push("/homepage");
       })
       .catch((error) => {
-        // SHIN TODO: Add error handling for wrong password
+        setError("Incorrect password. Please try again.");
         console.log(error);
       });
   };
@@ -25,11 +26,15 @@ export default function Home() {
   return (
     <main className="flex flex-col items-center justify-center h-screen">
       <h1 className="text-4xl mb-4 font-bold">Meal Planner</h1>
-      <form onSubmit={signIn}>
+      <form onSubmit={signIn} className="w-full max-w-56">
         <div className="flex justify-center">
           <h1>Login to your Account</h1>
         </div>
-
+        {error && (
+          <div className="w-full bg-red-500 text-white p-2 mb-4 mt-2 rounded-md">
+            {error}
+          </div>
+        )}
         <input
           type="email"
           placeholder="Enter your email"
