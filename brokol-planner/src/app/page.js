@@ -14,7 +14,7 @@ export default function Home() {
     e.preventDefault();
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        router.push("/input");
+        router.push("/homepage");
       })
       .catch((error) => {
         // SHIN TODO: Add error handling for wrong password
