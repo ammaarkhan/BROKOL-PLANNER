@@ -51,7 +51,7 @@ function Input() {
                 name="mealsPerDay"
                 value={formData.mealsPerDay}
                 onChange={handleChange}
-                className="h-8 pl-3 border border-gray-300 mt-2 block w-full rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                className="ml-4 h-8 pl-3 border border-gray-300 mt-2 block w-40 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 placeholder="Input a number"
               />
             </label>
@@ -65,7 +65,7 @@ function Input() {
                 name="daysPerWeek"
                 value={formData.daysPerWeek}
                 onChange={handleChange}
-                className="h-8 pl-3 border mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                className="ml-4 h-8 pl-3 border mt-2 block w-40 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 placeholder="Input a number"
               />
             </label>
@@ -79,7 +79,7 @@ function Input() {
                 name="prepTime"
                 value={formData.prepTime}
                 onChange={handleChange}
-                className="h-8 pl-3 border mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                className="ml-4 h-8 pl-3 border mt-2 block w-40 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 placeholder="Input a number"
               />
             </label>
@@ -91,7 +91,7 @@ function Input() {
                 name="servingsPerMeal"
                 value={formData.servingsPerMeal}
                 onChange={handleChange}
-                className="h-8 pl-3 border mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                className="ml-4 h-8 pl-3 border mt-2 block w-40 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 placeholder="Input a number"
               />
             </label>
