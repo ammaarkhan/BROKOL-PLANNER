@@ -18,7 +18,9 @@ export default function Home() {
         router.push("/home");
       })
       .catch((error) => {
-        setError("Incorrect password. Please try again.");
+        setError(
+          "Incorrect password. Contact hello@brokol.app if you need help :)"
+        );
         console.log(error);
       });
   };
