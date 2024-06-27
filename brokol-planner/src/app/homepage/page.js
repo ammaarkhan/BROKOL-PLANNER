@@ -7,7 +7,7 @@ import withAuth from "../firebase/withAuth";
 import { auth } from "../../config/firebase";
 import { signOut } from "firebase/auth";
 
-export default function homepage() {
+export default function Homepage() {
     const router = useRouter();
     return (
         <div className="min-h-screen flex flex-col items-center justify-center">

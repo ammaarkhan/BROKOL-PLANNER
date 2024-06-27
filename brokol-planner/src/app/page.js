@@ -15,7 +15,7 @@ export default function Home() {
     e.preventDefault();
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        router.push("/homepage");
+        router.push("/Homepage");
       })
       .catch((error) => {
         setError("Incorrect password. Please try again.");
