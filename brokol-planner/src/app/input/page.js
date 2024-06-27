@@ -13,12 +13,38 @@ function Input() {
     prepTime: "",
     servingsPerMeal: "",
     dietaryPreferences: "",
+    weeklyFeeling: "",
     skillLevel: "",
   });
+
+  const dietaryPreferenceOptions = [
+    "Vegan",
+    "Vegetarian",
+    "Halal",
+    "Keto",
+    "Gluten-free",
+    "Low-carb",
+    "Paleo",
+    "Dairy-free",
+  ];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+  };
+
+  const handleCheckboxChange = (e) => {
+    const { name, value, checked } = e.target;
+    setFormData((prevData) => {
+      if (checked) {
+        return { ...prevData, [name]: [...prevData[name], value] };
+      } else {
+        return {
+          ...prevData,
+          [name]: prevData[name].filter((v) => v !== value),
+        };
+      }
+    });
   };
 
   const handleSubmit = (e) => {
@@ -28,7 +54,7 @@ function Input() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-white">
       <form onSubmit={handleSubmit} className="bg-white p-8 w-full max-w-3xl">
-        <button onClick={() => signOut(auth)}>Log out</button>
+        {/* <button onClick={() => signOut(auth)}>Log out</button> */}
         <h1 className="text-2xl font-bold mb-6 text-center">Meal Planner</h1>
         <div className="grid grid-cols-2 gap-6">
           <div>
@@ -39,7 +65,7 @@ function Input() {
                 name="mealsPerDay"
                 value={formData.mealsPerDay}
                 onChange={handleChange}
-                className="h-8 pl-3 border border-gray-300 mt-2 block w-full rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                className="ml-4 h-8 pl-3 border border-gray-300 mt-2 block w-40 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 placeholder="Input a number"
               />
             </label>
@@ -53,7 +79,7 @@ function Input() {
                 name="daysPerWeek"
                 value={formData.daysPerWeek}
                 onChange={handleChange}
-                className="h-8 pl-3 border mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                className="ml-4 h-8 pl-3 border mt-2 block w-40 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 placeholder="Input a number"
               />
             </label>
@@ -67,7 +93,7 @@ function Input() {
                 name="prepTime"
                 value={formData.prepTime}
                 onChange={handleChange}
-                className="h-8 pl-3 border mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                className="ml-4 h-8 pl-3 border mt-2 block w-40 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 placeholder="Input a number"
               />
             </label>
@@ -79,7 +105,7 @@ function Input() {
                 name="servingsPerMeal"
                 value={formData.servingsPerMeal}
                 onChange={handleChange}
-                className="h-8 pl-3 border mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                className="ml-4 h-8 pl-3 border mt-2 block w-40 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 placeholder="Input a number"
               />
             </label>
@@ -90,22 +116,40 @@ function Input() {
               <span className="font-bold">
                 5. What are your dietary preferences?
               </span>
+              <div className="mt-2 grid grid-cols-3 gap-1">
+                {dietaryPreferenceOptions.map((preference) => (
+                  <label key={preference} className="inline-flex items-center">
+                    <input
+                      type="checkbox"
+                      name="dietaryPreferences"
+                      value={preference}
+                      checked={formData.dietaryPreferences.includes(preference)}
+                      onChange={handleCheckboxChange}
+                      className="form-checkbox"
+                    />
+                    <span className="ml-2">{preference}</span>
+                  </label>
+                ))}
+              </div>
+            </label>
+            <label className="block mb-4">
+              <span className="font-bold">
+                6. What are you feeling this week?
+              </span>
               <textarea
-                type="text"
-                name="dietaryPreferences"
-                value={formData.dietaryPreferences}
+                name="weeklyFeeling"
+                value={formData.weeklyFeeling}
                 onChange={handleChange}
-                className="pl-3 pt-1 border mt-2 block w-full h-40 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 "
-                placeholder="e.g. Halal food, vegetarian, etc"
+                className="pl-3 pt-1 border mt-2 block w-full h-24 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                placeholder="e.g. i want to eat healthy this week. i have some pasta and mushroom"
               />
             </label>
-
             <div className="block mb-4">
               <span className="font-bold">
-                6. What is your cooking skill level?
+                7. What is your cooking skill level?
               </span>
-              <div className="mt-2 flex flex-col">
-                <label className="inline-flex items-center ml-5 mb-2">
+              <div className="mt-2 flex space-x-8">
+                <label className="inline-flex items-center">
                   <input
                     type="radio"
                     name="skillLevel"
@@ -116,7 +160,7 @@ function Input() {
                   />
                   <span className="ml-2">Beginner</span>
                 </label>
-                <label className="inline-flex items-center ml-5 mb-2">
+                <label className="inline-flex items-center">
                   <input
                     type="radio"
                     name="skillLevel"
@@ -127,7 +171,7 @@ function Input() {
                   />
                   <span className="ml-2">Intermediate</span>
                 </label>
-                <label className="inline-flex items-center ml-5">
+                <label className="inline-flex items-center">
                   <input
                     type="radio"
                     name="skillLevel"
