@@ -189,13 +189,13 @@ export default function Recipes({ searchParams }) {
               className="bg-black text-white py-2 px-4 rounded-lg"
               onClick={saveMeals}
             >
-              Save Meal Plan
+              &rarr; Save Meal Plan
             </button>
           </div>
         </>
       ) : (
         <p className="flex justify-center text-lg mt-10">
-          Recipes loading... I promise I don't take too long :)
+          Recipes loading... I promise I don&apost take too long :)
         </p>
       )}
     </div>
