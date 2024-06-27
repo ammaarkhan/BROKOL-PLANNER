@@ -7,7 +7,7 @@ import { auth } from "../../config/firebase";
 import { signOut } from "firebase/auth";
 
 function Input() {
-    const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState({
     mealsPerDay: "",
     daysPerWeek: "",
     prepTime: "",
@@ -16,6 +16,17 @@ function Input() {
     weeklyFeeling: "",
     skillLevel: "",
   });
+
+  const dietaryPreferenceOptions = [
+    "Vegan",
+    "Vegetarian",
+    "Halal",
+    "Keto",
+    "Gluten-free",
+    "Low-carb",
+    "Paleo",
+    "Dairy-free",
+  ];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -28,7 +39,10 @@ function Input() {
       if (checked) {
         return { ...prevData, [name]: [...prevData[name], value] };
       } else {
-        return { ...prevData, [name]: prevData[name].filter((v) => v !== value) };
+        return {
+          ...prevData,
+          [name]: prevData[name].filter((v) => v !== value),
+        };
       }
     });
   };
@@ -98,36 +112,42 @@ function Input() {
           </div>
 
           <div>
-          <label className="block mb-4">
-            <span className="font-bold">5. What are your dietary preferences?</span>
-            <div className="mt-2 grid grid-cols-3 gap-1">
-              {["Vegan", "Vegetarian", "Halal", "Keto", "Gluten-free", "Low-carb", "Paleo", "Dairy-free"].map((preference) => (
-                <label key={preference} className="inline-flex items-center">
-                  <input
-                    type="checkbox"
-                    name="dietaryPreferences"
-                    value={preference}
-                    checked={formData.dietaryPreferences.includes(preference)}
-                    onChange={handleCheckboxChange}
-                    className="form-checkbox"
-                  />
-                  <span className="ml-2">{preference}</span>
-                </label>
-              ))}
-            </div>
-          </label>
             <label className="block mb-4">
-              <span className="font-bold">6. What are you feeling this week?</span>
+              <span className="font-bold">
+                5. What are your dietary preferences?
+              </span>
+              <div className="mt-2 grid grid-cols-3 gap-1">
+                {dietaryPreferenceOptions.map((preference) => (
+                  <label key={preference} className="inline-flex items-center">
+                    <input
+                      type="checkbox"
+                      name="dietaryPreferences"
+                      value={preference}
+                      checked={formData.dietaryPreferences.includes(preference)}
+                      onChange={handleCheckboxChange}
+                      className="form-checkbox"
+                    />
+                    <span className="ml-2">{preference}</span>
+                  </label>
+                ))}
+              </div>
+            </label>
+            <label className="block mb-4">
+              <span className="font-bold">
+                6. What are you feeling this week?
+              </span>
               <textarea
                 name="weeklyFeeling"
                 value={formData.weeklyFeeling}
                 onChange={handleChange}
                 className="pl-3 pt-1 border mt-2 block w-full h-24 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                placeholder="e.g. I want to eat healthy this week, also have some pasta and mushroom"
+                placeholder="e.g. i want to eat healthy this week. i have some pasta and mushroom"
               />
             </label>
             <div className="block mb-4">
-              <span className="font-bold">7. What is your cooking skill level?</span>
+              <span className="font-bold">
+                7. What is your cooking skill level?
+              </span>
               <div className="mt-2 flex space-x-8">
                 <label className="inline-flex items-center">
                   <input
