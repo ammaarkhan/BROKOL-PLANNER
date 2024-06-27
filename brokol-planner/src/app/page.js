@@ -30,11 +30,7 @@ export default function Home() {
         <div className="flex justify-center">
           <h1>Login to your Account</h1>
         </div>
-        {error && (
-          <div className="w-full bg-red-500 text-white p-2 mb-4 mt-2 rounded-md">
-            {error}
-          </div>
-        )}
+        
         <input
           type="email"
           placeholder="Enter your email"
@@ -49,6 +45,11 @@ export default function Home() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         ></input>
+        {error && (
+          <div className="w-full bg-red-500 text-white p-2 mb-2 mt-4 rounded-md">
+            {error}
+          </div>
+        )}
         <div className="flex justify-center mt-2">
           <button
             type="submit"
