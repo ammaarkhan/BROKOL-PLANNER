@@ -7,7 +7,7 @@ import { auth } from "../../config/firebase";
 import { signOut } from "firebase/auth";
 
 function Input() {
-  const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState({
     mealsPerDay: "",
     daysPerWeek: "",
     prepTime: "",
@@ -40,7 +40,7 @@ function Input() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-white">
       <form onSubmit={handleSubmit} className="bg-white p-8 w-full max-w-3xl">
-        <button onClick={() => signOut(auth)}>Log out</button>
+        {/* <button onClick={() => signOut(auth)}>Log out</button> */}
         <h1 className="text-2xl font-bold mb-6 text-center">Meal Planner</h1>
         <div className="grid grid-cols-2 gap-6">
           <div>
