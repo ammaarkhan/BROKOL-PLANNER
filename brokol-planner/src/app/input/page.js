@@ -13,12 +13,24 @@ function Input() {
     prepTime: "",
     servingsPerMeal: "",
     dietaryPreferences: "",
+    weeklyFeeling: "",
     skillLevel: "",
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+  };
+
+  const handleCheckboxChange = (e) => {
+    const { name, value, checked } = e.target;
+    setFormData((prevData) => {
+      if (checked) {
+        return { ...prevData, [name]: [...prevData[name], value] };
+      } else {
+        return { ...prevData, [name]: prevData[name].filter((v) => v !== value) };
+      }
+    });
   };
 
   const handleSubmit = (e) => {
@@ -86,26 +98,38 @@ function Input() {
           </div>
 
           <div>
+          <label className="block mb-4">
+            <span className="font-bold">5. What are your dietary preferences?</span>
+            <div className="mt-2 grid grid-cols-3 gap-1">
+              {["Vegan", "Vegetarian", "Halal", "Keto", "Gluten-free", "Low-carb", "Paleo", "Dairy-free"].map((preference) => (
+                <label key={preference} className="inline-flex items-center">
+                  <input
+                    type="checkbox"
+                    name="dietaryPreferences"
+                    value={preference}
+                    checked={formData.dietaryPreferences.includes(preference)}
+                    onChange={handleCheckboxChange}
+                    className="form-checkbox"
+                  />
+                  <span className="ml-2">{preference}</span>
+                </label>
+              ))}
+            </div>
+          </label>
             <label className="block mb-4">
-              <span className="font-bold">
-                5. What are your dietary preferences?
-              </span>
+              <span className="font-bold">6. What are you feeling this week?</span>
               <textarea
-                type="text"
-                name="dietaryPreferences"
-                value={formData.dietaryPreferences}
+                name="weeklyFeeling"
+                value={formData.weeklyFeeling}
                 onChange={handleChange}
-                className="pl-3 pt-1 border mt-2 block w-full h-40 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 "
-                placeholder="e.g. Halal food, vegetarian, etc"
+                className="pl-3 pt-1 border mt-2 block w-full h-24 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                placeholder="e.g. I want to eat healthy this week, also have some pasta and mushroom"
               />
             </label>
-
             <div className="block mb-4">
-              <span className="font-bold">
-                6. What is your cooking skill level?
-              </span>
-              <div className="mt-2 flex flex-col">
-                <label className="inline-flex items-center ml-5 mb-2">
+              <span className="font-bold">7. What is your cooking skill level?</span>
+              <div className="mt-2 flex space-x-8">
+                <label className="inline-flex items-center">
                   <input
                     type="radio"
                     name="skillLevel"
@@ -116,7 +140,7 @@ function Input() {
                   />
                   <span className="ml-2">Beginner</span>
                 </label>
-                <label className="inline-flex items-center ml-5 mb-2">
+                <label className="inline-flex items-center">
                   <input
                     type="radio"
                     name="skillLevel"
@@ -127,7 +151,7 @@ function Input() {
                   />
                   <span className="ml-2">Intermediate</span>
                 </label>
-                <label className="inline-flex items-center ml-5">
+                <label className="inline-flex items-center">
                   <input
                     type="radio"
                     name="skillLevel"
