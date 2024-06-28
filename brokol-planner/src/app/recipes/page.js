@@ -7,12 +7,16 @@ import { saveMealPlanMetadata, saveRecipesAndShoppingList } from "../db";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import withAuth from "../firebase/withAuth";
+import useAnalytics from '../hooks/useAnalytics';
 
 // Force the page to be dynamic and allow streaming responses up to 30 seconds
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 function Recipes({ searchParams }) {
+
+  useAnalytics();
+
   const {
     mealsPerDay,
     daysPerWeek,

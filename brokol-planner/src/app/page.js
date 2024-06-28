@@ -4,8 +4,12 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
 import { auth } from "../config/firebase";
 import { useRouter } from "next/navigation";
+import useAnalytics from '../app/hooks/useAnalytics';
 
 export default function Home() {
+
+  useAnalytics();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null); // Add state for error message

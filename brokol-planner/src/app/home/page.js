@@ -3,8 +3,14 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import withAuth from "../firebase/withAuth";
+import { logEvent } from "firebase/analytics";
+import { analytics } from "../../config/firebase";
+import useAnalytics from '../hooks/useAnalytics';
 
 function Home() {
+
+  useAnalytics();
+
   const router = useRouter();
   return (
     <div className="min-h-screen flex flex-col items-center justify-center">

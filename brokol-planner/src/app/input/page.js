@@ -5,8 +5,12 @@ import Link from "next/link";
 import withAuth from "../firebase/withAuth";
 import { auth } from "../../config/firebase";
 import { signOut } from "firebase/auth";
+import useAnalytics from '../hooks/useAnalytics';
 
 function Input() {
+
+  useAnalytics();
+
   const [formData, setFormData] = useState({
     mealsPerDay: "",
     daysPerWeek: "",
