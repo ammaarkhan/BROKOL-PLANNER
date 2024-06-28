@@ -8,6 +8,8 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import withAuth from "../firebase/withAuth";
 import useAnalytics from '../hooks/useAnalytics';
+import { analytics } from '../../config/firebase';
+import { logEvent } from "firebase/analytics";
 
 // Force the page to be dynamic and allow streaming responses up to 30 seconds
 export const dynamic = "force-dynamic";
@@ -185,6 +187,7 @@ function Recipes({ searchParams }) {
     setRecipeList((prevRecipeList) =>
       prevRecipeList.filter((_, i) => i !== index)
     );
+    logEvent(analytics, 'recipe_removed');
   };
 
   return (
