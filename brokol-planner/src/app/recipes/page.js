@@ -120,6 +120,7 @@ function Recipes({ searchParams }) {
   }, []);
 
   const moreRecipes = async () => {
+    logEvent(analytics, "more_recipes");
     setMoreRecipesLoading(true);
     try {
       const { output } = await generate(promptTwo);
@@ -168,6 +169,7 @@ function Recipes({ searchParams }) {
   }, [recipeList]);
 
   const saveMeals = async () => {
+    logEvent(analytics, "save_mealplan");
     setMealPlanLoading(true);
     try {
       const mealPlanId = await saveMealPlanMetadata(uid);
@@ -184,10 +186,10 @@ function Recipes({ searchParams }) {
   };
 
   const removeRecipe = (index) => {
+    logEvent(analytics, 'recipe_removed');
     setRecipeList((prevRecipeList) =>
       prevRecipeList.filter((_, i) => i !== index)
     );
-    logEvent(analytics, 'recipe_removed');
   };
 
   return (

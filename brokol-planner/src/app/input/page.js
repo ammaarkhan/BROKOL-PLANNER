@@ -6,6 +6,7 @@ import withAuth from "../firebase/withAuth";
 import { auth } from "../../config/firebase";
 import { signOut } from "firebase/auth";
 import useAnalytics from '../hooks/useAnalytics';
+import { logEvent } from "firebase/analytics";
 
 function Input() {
 
@@ -194,6 +195,7 @@ function Input() {
           <button
             type="submit"
             className="mt-6 py-2 px-4 bg-black text-white font-semibold rounded-md shadow-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            onClick={logEvent(analytics, 'generate_recipe')}
           >
             <Link
               href={{
