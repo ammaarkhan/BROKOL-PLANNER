@@ -5,6 +5,7 @@ import Link from "next/link";
 import withAuth from "../firebase/withAuth";
 import { auth } from "../../config/firebase";
 import { signOut } from "firebase/auth";
+import analytics from "../../config/firebase";
 import useAnalytics from '../hooks/useAnalytics';
 import { logEvent } from "firebase/analytics";
 
