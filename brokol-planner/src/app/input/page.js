@@ -1,12 +1,17 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import withAuth from "../firebase/withAuth";
-import { auth } from "../../config/firebase";
+import { auth, db } from "../../config/firebase";
 import { signOut } from "firebase/auth";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 
 function Input() {
+
+  const router = useRouter();
+
   const [formData, setFormData] = useState({
     mealsPerDay: "",
     daysPerWeek: "",
@@ -16,6 +21,33 @@ function Input() {
     weeklyFeeling: "",
     skillLevel: "",
   });
+
+  const [uid, setUid] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUid(user.uid);
+        fetchUserData(user.uid);
+      } else {
+        setUid(null);
+      }
+    });
+  
+    return () => unsubscribe();
+  }, []);
+
+  const fetchUserData = async (uid) => {
+    try {
+      const docRef = doc(db, `users/${uid}/input/formData`);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        setFormData(docSnap.data());
+      }
+    } catch (error) {
+      console.error("Error fetching user data: ", error);
+    }
+  };
 
   const dietaryPreferenceOptions = [
     "Vegan",
@@ -47,8 +79,18 @@ function Input() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (uid) {
+      try {
+        const docRef = doc(db, `users/${uid}/input/formData`);
+        await setDoc(docRef, formData);
+        console.log("Data saved successfully!");
+        router.push('/recipes');
+      } catch (error) {
+        console.error("Error saving data: ", error);
+      }
+    }
   };
 
   return (
@@ -191,14 +233,7 @@ function Input() {
             type="submit"
             className="mt-6 py-2 px-4 bg-black text-white font-semibold rounded-md shadow-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
-            <Link
-              href={{
-                pathname: "/recipes",
-                query: formData,
-              }}
-            >
-              Submit
-            </Link>
+          Submit
           </button>
         </div>
       </form>
