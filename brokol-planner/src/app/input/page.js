@@ -89,13 +89,8 @@ function Input() {
   
         // Convert formData to query string
         const params = new URLSearchParams({
-          mealsPerDay: formData.mealsPerDay,
-          daysPerWeek: formData.daysPerWeek,
-          prepTime: formData.prepTime,
-          servingsPerMeal: formData.servingsPerMeal,
-          dietaryPreferences: formData.dietaryPreferences.join(","), // Convert array to comma-separated string
-          weeklyFeeling: formData.weeklyFeeling,
-          skillLevel: formData.skillLevel,
+          ...formData,
+          dietaryPreferences: formData.dietaryPreferences.join(","),
         }).toString();
         router.push(`/recipes?${params}`);
       } catch (error) {
