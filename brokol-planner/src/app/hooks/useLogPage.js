@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { logEvent } from 'firebase/analytics';
 import { analytics } from '../../config/firebase';
 
-  const logPage = () => {
+  const useLogPage = () => {
     const pathname = usePathname();
   
     useEffect(() => {
@@ -16,4 +16,4 @@ import { analytics } from '../../config/firebase';
     }, [pathname]); // Only re-run the effect if pathname changes
   };
 
-export default logPage;
+export default useLogPage;

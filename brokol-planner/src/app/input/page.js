@@ -3,11 +3,11 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import withAuth from "../firebase/withAuth";
-import logPage from '../hooks/logPage';
+import useLogPage from '../hooks/useLogPage';
 
 function Input() {
 
-  logPage();
+  useLogPage();
 
   const [formData, setFormData] = useState({
     mealsPerDay: "",

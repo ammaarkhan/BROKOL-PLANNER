@@ -4,11 +4,11 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
 import { auth } from "../config/firebase";
 import { useRouter } from "next/navigation";
-import logPage from '../app/hooks/logPage';
+import useLogPage from './hooks/useLogPage';
 
 export default function Home() {
 
-  logPage();
+  useLogPage();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
