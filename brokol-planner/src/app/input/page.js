@@ -17,7 +17,7 @@ function Input() {
     daysPerWeek: "",
     prepTime: "",
     servingsPerMeal: "",
-    dietaryPreferences: "",
+    dietaryPreferences: [],
     weeklyFeeling: "",
     skillLevel: "",
   });
@@ -66,14 +66,14 @@ function Input() {
   };
 
   const handleCheckboxChange = (e) => {
-    const { name, value, checked } = e.target;
+    const { value, checked } = e.target;
     setFormData((prevData) => {
       if (checked) {
-        return { ...prevData, [name]: [...prevData[name], value] };
+        return { ...prevData, dietaryPreferences: [...prevData.dietaryPreferences, value] };
       } else {
         return {
           ...prevData,
-          [name]: prevData[name].filter((v) => v !== value),
+          dietaryPreferences: prevData.dietaryPreferences.filter((v) => v !== value),
         };
       }
     });
@@ -86,7 +86,18 @@ function Input() {
         const docRef = doc(db, `users/${uid}/input/formData`);
         await setDoc(docRef, formData);
         console.log("Data saved successfully!");
-        router.push('/recipes');
+  
+        // Convert formData to query string
+        const params = new URLSearchParams({
+          mealsPerDay: formData.mealsPerDay,
+          daysPerWeek: formData.daysPerWeek,
+          prepTime: formData.prepTime,
+          servingsPerMeal: formData.servingsPerMeal,
+          dietaryPreferences: formData.dietaryPreferences.join(","), // Convert array to comma-separated string
+          weeklyFeeling: formData.weeklyFeeling,
+          skillLevel: formData.skillLevel,
+        }).toString();
+        router.push(`/recipes?${params}`);
       } catch (error) {
         console.error("Error saving data: ", error);
       }
