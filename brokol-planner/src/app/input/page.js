@@ -3,11 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import withAuth from "../firebase/withAuth";
-import { auth } from "../../config/firebase";
-import { signOut } from "firebase/auth";
-import analytics from "../../config/firebase";
 import logPage from '../hooks/logPage';
-import { logEvent } from "firebase/analytics";
 
 function Input() {
 

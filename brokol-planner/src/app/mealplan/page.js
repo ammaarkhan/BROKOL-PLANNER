@@ -6,7 +6,7 @@ import { db } from "../../config/firebase";
 import { collection, query, orderBy, limit, getDocs } from "firebase/firestore";
 import Link from "next/link";
 import withAuth from "../firebase/withAuth";
-import useAnalytics from '../hooks/logPage';
+import logPage from '../hooks/logPage';
 
 function MealPlan() {
   
