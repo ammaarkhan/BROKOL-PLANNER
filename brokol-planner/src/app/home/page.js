@@ -3,13 +3,11 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import withAuth from "../firebase/withAuth";
-import { logEvent } from "firebase/analytics";
-import { analytics } from "../../config/firebase";
-import useAnalytics from '../hooks/useAnalytics';
+import logPage from '../hooks/logPage';
 
 function Home() {
 
-  useAnalytics();
+  logPage();
 
   const router = useRouter();
   return (

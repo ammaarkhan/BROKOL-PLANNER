@@ -7,7 +7,7 @@ import { saveMealPlanMetadata, saveRecipesAndShoppingList } from "../db";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import withAuth from "../firebase/withAuth";
-import useAnalytics from '../hooks/useAnalytics';
+import logPage from '../hooks/logPage';
 import { analytics } from '../../config/firebase';
 import { logEvent } from "firebase/analytics";
 
@@ -17,7 +17,7 @@ export const maxDuration = 60;
 
 function Recipes({ searchParams }) {
 
-  useAnalytics();
+  logPage();
 
   const {
     mealsPerDay,

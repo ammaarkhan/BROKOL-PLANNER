@@ -6,11 +6,11 @@ import { db } from "../../config/firebase";
 import { collection, query, orderBy, limit, getDocs } from "firebase/firestore";
 import Link from "next/link";
 import withAuth from "../firebase/withAuth";
-import useAnalytics from '../hooks/useAnalytics';
+import useAnalytics from '../hooks/logPage';
 
 function MealPlan() {
   
-  useAnalytics();
+  logPage();
   
   const [recipeList, setRecipeList] = useState([]);
   const [shoppingList, setShoppingList] = useState([]);

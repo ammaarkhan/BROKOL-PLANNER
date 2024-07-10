@@ -6,12 +6,12 @@ import withAuth from "../firebase/withAuth";
 import { auth } from "../../config/firebase";
 import { signOut } from "firebase/auth";
 import analytics from "../../config/firebase";
-import useAnalytics from '../hooks/useAnalytics';
+import logPage from '../hooks/logPage';
 import { logEvent } from "firebase/analytics";
 
 function Input() {
 
-  useAnalytics();
+  logPage();
 
   const [formData, setFormData] = useState({
     mealsPerDay: "",

@@ -4,11 +4,11 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
 import { auth } from "../config/firebase";
 import { useRouter } from "next/navigation";
-import useAnalytics from '../app/hooks/useAnalytics';
+import logPage from '../app/hooks/logPage';
 
 export default function Home() {
 
-  useAnalytics();
+  logPage();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
