@@ -90,7 +90,7 @@ function Input() {
         // Convert formData to query string
         const params = new URLSearchParams({
           ...formData,
-          dietaryPreferences: formData.dietaryPreferences.join(","),
+          dietaryPreferences: formData.dietaryPreferences.join(","),//to convert from array to string
         }).toString();
         router.push(`/recipes?${params}`);
       } catch (error) {
