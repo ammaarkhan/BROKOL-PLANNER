@@ -10,7 +10,7 @@ const useLogPage = () => {
 
   useEffect(() => {
     if (analytics) {
-      logEvent(analytics, "page_view", { page_path: pathname });
+      logEvent(analytics, "page_view", { page_title: pathname });
     }
   }, [pathname]); // Only re-run the effect if pathname changes
 };
