@@ -2,14 +2,12 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import withAuth from "../firebase/withAuth";
 import { auth, db } from "../../config/firebase";
 import { signOut } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 
 function Input() {
-
   const router = useRouter();
 
   const [formData, setFormData] = useState({
@@ -33,7 +31,7 @@ function Input() {
         setUid(null);
       }
     });
-  
+
     return () => unsubscribe();
   }, []);
 
@@ -69,11 +67,16 @@ function Input() {
     const { value, checked } = e.target;
     setFormData((prevData) => {
       if (checked) {
-        return { ...prevData, dietaryPreferences: [...prevData.dietaryPreferences, value] };
+        return {
+          ...prevData,
+          dietaryPreferences: [...prevData.dietaryPreferences, value],
+        };
       } else {
         return {
           ...prevData,
-          dietaryPreferences: prevData.dietaryPreferences.filter((v) => v !== value),
+          dietaryPreferences: prevData.dietaryPreferences.filter(
+            (v) => v !== value
+          ),
         };
       }
     });
@@ -85,12 +88,11 @@ function Input() {
       try {
         const docRef = doc(db, `users/${uid}/input/formData`);
         await setDoc(docRef, formData);
-        console.log("Data saved successfully!");
-  
+
         // Convert formData to query string
         const params = new URLSearchParams({
           ...formData,
-          dietaryPreferences: formData.dietaryPreferences.join(","),//to convert from array to string
+          dietaryPreferences: formData.dietaryPreferences.join(", "), // To convert from array to string
         }).toString();
         router.push(`/recipes?${params}`);
       } catch (error) {
@@ -239,7 +241,7 @@ function Input() {
             type="submit"
             className="mt-6 py-2 px-4 bg-black text-white font-semibold rounded-md shadow-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
-          Submit
+            Submit
           </button>
         </div>
       </form>
