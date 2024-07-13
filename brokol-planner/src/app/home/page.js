@@ -3,8 +3,12 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import withAuth from "../firebase/withAuth";
+import useLogPage from '../hooks/useLogPage';
 
 function Home() {
+
+  useLogPage();
+
   const router = useRouter();
   return (
     <div className="min-h-screen flex flex-col items-center justify-center">
