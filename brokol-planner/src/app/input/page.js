@@ -1,11 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
-import Link from "next/link";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import withAuth from "../firebase/withAuth";
+import { auth, db } from "../../config/firebase";
+import { signOut } from "firebase/auth";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 import useLogPage from '../hooks/useLogPage';
 
 function Input() {
+  const router = useRouter();
 
   useLogPage();
 
@@ -14,10 +18,37 @@ function Input() {
     daysPerWeek: "",
     prepTime: "",
     servingsPerMeal: "",
-    dietaryPreferences: "",
+    dietaryPreferences: [],
     weeklyFeeling: "",
     skillLevel: "",
   });
+
+  const [uid, setUid] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUid(user.uid);
+        fetchUserData(user.uid);
+      } else {
+        setUid(null);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const fetchUserData = async (uid) => {
+    try {
+      const docRef = doc(db, `users/${uid}/input/formData`);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        setFormData(docSnap.data());
+      }
+    } catch (error) {
+      console.error("Error fetching user data: ", error);
+    }
+  };
 
   const dietaryPreferenceOptions = [
     "Vegan",
@@ -36,21 +67,41 @@ function Input() {
   };
 
   const handleCheckboxChange = (e) => {
-    const { name, value, checked } = e.target;
+    const { value, checked } = e.target;
     setFormData((prevData) => {
       if (checked) {
-        return { ...prevData, [name]: [...prevData[name], value] };
+        return {
+          ...prevData,
+          dietaryPreferences: [...prevData.dietaryPreferences, value],
+        };
       } else {
         return {
           ...prevData,
-          [name]: prevData[name].filter((v) => v !== value),
+          dietaryPreferences: prevData.dietaryPreferences.filter(
+            (v) => v !== value
+          ),
         };
       }
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (uid) {
+      try {
+        const docRef = doc(db, `users/${uid}/input/formData`);
+        await setDoc(docRef, formData);
+
+        // Convert formData to query string
+        const params = new URLSearchParams({
+          ...formData,
+          dietaryPreferences: formData.dietaryPreferences.join(", "), // To convert from array to string
+        }).toString();
+        router.push(`/recipes?${params}`);
+      } catch (error) {
+        console.error("Error saving data: ", error);
+      }
+    }
   };
 
   return (
@@ -193,14 +244,7 @@ function Input() {
             type="submit"
             className="mt-6 py-2 px-4 bg-black text-white font-semibold rounded-md shadow-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
-            <Link
-              href={{
-                pathname: "/recipes",
-                query: formData,
-              }}
-            >
-              Submit
-            </Link>
+            Submit
           </button>
         </div>
       </form>
