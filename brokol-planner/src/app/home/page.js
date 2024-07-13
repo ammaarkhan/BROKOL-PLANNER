@@ -18,7 +18,7 @@ function Home() {
             className="w-48 h-32 font-bold bg-white border-2 border-black text-black text-xl rounded-lg hover:bg-gray-200"
             onClick={() => router.push("/input")}
           >
-            Generate new meal plan
+            Generate a new meal plan
           </button>
           <button
             className="w-48 h-32 font-bold bg-white border-2 border-black text-black text-xl rounded-lg hover:bg-gray-200"
