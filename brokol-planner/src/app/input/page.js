@@ -6,12 +6,9 @@ import withAuth from "../firebase/withAuth";
 import { auth, db } from "../../config/firebase";
 import { signOut } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
-import useLogPage from '../hooks/useLogPage';
 
 function Input() {
   const router = useRouter();
-
-  useLogPage();
 
   const [formData, setFormData] = useState({
     mealsPerDay: "",
