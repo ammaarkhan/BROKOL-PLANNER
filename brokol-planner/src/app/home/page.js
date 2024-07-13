@@ -12,9 +12,7 @@ function Home() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center">
       <div className="flex flex-col items-center justify-center flex-1 py-5">
-        <h1 className="text-4xl font-bold text-center mb-10">
-          Homepage Analytics main
-        </h1>
+        <h1 className="text-4xl font-bold text-center mb-10">Homepage</h1>
         <div className="flex gap-8">
           <button
             className="w-48 h-32 font-bold bg-white border-2 border-black text-black text-xl rounded-lg hover:bg-gray-200"
