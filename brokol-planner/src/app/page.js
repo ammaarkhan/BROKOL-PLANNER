@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 export default function Home() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(null); // Add state for error message
+  const [error, setError] = useState(null);
   const router = useRouter();
 
   const signIn = (e) => {
