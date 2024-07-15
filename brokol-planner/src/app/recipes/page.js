@@ -41,7 +41,7 @@ function Recipes({ searchParams }) {
     - Dietary preferences: ${dietaryPreferences}
     - Weekly feeling: ${weeklyFeeling}
     - Skill level: ${skillLevel}
-    Return each recipe as a separate JSON object on a new line in the format below. Output the prepTime in minutes.
+    Return each recipe as a separate JSON object on a new line in the format below. Output the prepTime in minutes. Do not wrap the json codes in JSON markers.
     {
         "recipe": {
         "name": "string",
@@ -66,7 +66,7 @@ function Recipes({ searchParams }) {
     - Dietary preferences: ${dietaryPreferences}
     - Weekly feeling: ${weeklyFeeling}
     - Skill level: ${skillLevel}
-    Return each recipe as a separate JSON object on a new line in the format below. Output the prepTime in minutes.
+    Return each recipe as a separate JSON object on a new line in the format below. Output the prepTime in minutes. Do not wrap the json codes in JSON markers.
     {
         "recipe": {
         "name": "string",
