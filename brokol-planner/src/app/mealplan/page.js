@@ -6,8 +6,12 @@ import { db } from "../../config/firebase";
 import { collection, query, orderBy, limit, getDocs } from "firebase/firestore";
 import Link from "next/link";
 import withAuth from "../firebase/withAuth";
+import useLogPage from '../hooks/useLogPage';
 
 function MealPlan() {
+  
+  useLogPage();
+  
   const [recipeList, setRecipeList] = useState([]);
   const [shoppingList, setShoppingList] = useState([]);
   const [uid, setUid] = useState(null);

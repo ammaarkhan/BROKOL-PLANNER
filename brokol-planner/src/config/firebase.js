@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-// import { getAnalytics } from "firebase/analytics";
+import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
 
 // Your web app's Firebase configuration
@@ -13,19 +13,19 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
-//(shin) do I need database url? check the website in line 6
+
 let app;
 let auth;
 let db;
-// let analytics;
+let analytics;
 
 if (typeof window !== "undefined") {
   app = initializeApp(firebaseConfig);
   auth = getAuth(app);
   db = getFirestore(app);
-  //   analytics = getAnalytics(app);
+  analytics = getAnalytics(app);
 }
 
-export { auth, db };
+export { auth, db, analytics };
 
 export default app;

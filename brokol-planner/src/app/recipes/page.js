@@ -7,12 +7,18 @@ import { saveMealPlanMetadata, saveRecipesAndShoppingList } from "../db";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import withAuth from "../firebase/withAuth";
+import useLogPage from '../hooks/useLogPage';
+import { analytics } from '../../config/firebase';
+import { logEvent } from "firebase/analytics";
 
 // Force the page to be dynamic and allow streaming responses up to 30 seconds
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 function Recipes({ searchParams }) {
+
+  useLogPage();
+
   const {
     mealsPerDay,
     daysPerWeek,
@@ -114,6 +120,7 @@ function Recipes({ searchParams }) {
   }, []);
 
   const moreRecipes = async () => {
+    logEvent(analytics, "more_recipes");
     setMoreRecipesLoading(true);
     try {
       const { output } = await generate(promptTwo);
@@ -162,6 +169,7 @@ function Recipes({ searchParams }) {
   }, [recipeList]);
 
   const saveMeals = async () => {
+    logEvent(analytics, "save_mealplan");
     setMealPlanLoading(true);
     try {
       const mealPlanId = await saveMealPlanMetadata(uid);
@@ -178,6 +186,7 @@ function Recipes({ searchParams }) {
   };
 
   const removeRecipe = (index) => {
+    logEvent(analytics, 'recipe_removed');
     setRecipeList((prevRecipeList) =>
       prevRecipeList.filter((_, i) => i !== index)
     );
