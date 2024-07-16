@@ -38,10 +38,12 @@ function Recipes({ searchParams }) {
 
   const [outputText, setOutputText] = useState("");
   const [recipeList, setRecipeList] = useState([]);
+  const [deletedRecipes, setDeletedRecipes] = useState([]);
   const [recipeNames, setRecipeNames] = useState([]);
   const [uid, setUid] = useState(null);
   const [moreRecipesLoading, setMoreRecipesLoading] = useState(false);
   const [mealPlanLoading, setMealPlanLoading] = useState(false);
+  const [preferences, setPreferences] = useState("");
 
   const prompt = `
   Output ${mealsPerWeek} recipes. Assume I have have no precooked items. Give realistic preparation times please and don't output the same recipe twice. Consider the following preferences:
@@ -69,12 +71,15 @@ function Recipes({ searchParams }) {
     }`;
 
   const promptTwo = `
-    Output 3 more recipes for my week, I currently have ${recipeNames}. Assume I have have no precooked items. Give realistic preparation times please and don't output the same recipe twice. Consider the following preferences:
+    Output 3 more recipes for my week, I currently have ${recipeNames}. These are recipes I removed: ${deletedRecipes}. Assume I have have no precooked items. Give realistic preparation times please and don't output the same recipe twice. Consider the following preferences:
     - Prep time: ${prepTime} minutes
     - Portions needed per meal: ${servingsPerMeal}
     - Dietary preferences: ${dietaryPreferences}
     - Weekly feeling: ${weeklyFeeling}
     - Skill level: ${skillLevel}
+    Tailor the 3 new recipes to include: ${
+      preferences || "no specific preferences provided"
+    }
     Return each recipe as a separate JSON object on a new line in the format below. Output the prepTime in minutes. Do not wrap the json codes in JSON markers.
     {
         "recipe": {
@@ -92,6 +97,10 @@ function Recipes({ searchParams }) {
         ]
         }
     }`;
+
+  const handlePreferencesChange = (e) => {
+    setPreferences(e.target.value);
+  };
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -119,7 +128,7 @@ function Recipes({ searchParams }) {
     fetchRecipes();
   }, []);
 
-  const moreRecipes = async () => {
+  const handleGenerateRecipes = async () => {
     logEvent(analytics, "more_recipes");
     setMoreRecipesLoading(true);
     try {
@@ -142,6 +151,8 @@ function Recipes({ searchParams }) {
 
         setOutputText(accumulatedOutput);
       }
+    } catch (error) {
+      console.error("Error generating more recipes:", error);
     } finally {
       setMoreRecipesLoading(false);
     }
@@ -187,6 +198,10 @@ function Recipes({ searchParams }) {
 
   const removeRecipe = (index) => {
     logEvent(analytics, "recipe_removed");
+    setDeletedRecipes((prevDeletedRecipes) => [
+      ...prevDeletedRecipes,
+      recipeList[index].recipe.name,
+    ]);
     setRecipeList((prevRecipeList) =>
       prevRecipeList.filter((_, i) => i !== index)
     );
@@ -211,44 +226,60 @@ function Recipes({ searchParams }) {
   };
 
   return (
-    <div>
+    <div className="flex flex-col items-center my-4">
       <h1 className="text-4xl mb-4 font-bold text-center mt-10">
         Edit Your Meal Plan
       </h1>
       {recipeList.length > 0 ? (
-        <>
-          <RecipesView
-            recipeStream={recipeList}
-            removeRecipe={removeRecipe}
-            addFavorite={addFavorite}
-          />
-          {moreRecipesLoading && (
-            <p className="flex justify-center text-md mt-3">
-              More recipes loading... lemme see what i can find for you :)
-            </p>
-          )}
-          {mealPlanLoading ? (
-            <div className="text-center my-4">
-              Generating meal plan... give me a sec - its my first day on the
-              job!
-            </div>
-          ) : (
-            <div className="flex justify-center gap-4 my-4">
+        <div className="flex w-full max-w-6xl">
+          <div className="w-4/6 pr-4">
+            <RecipesView
+              recipeStream={recipeList}
+              removeRecipe={removeRecipe}
+              addFavorite={addFavorite}
+            />
+            {moreRecipesLoading && (
+              <p className="flex justify-center text-md mt-3">
+                More recipes loading... lemme see what i can find for you :)
+              </p>
+            )}
+            {mealPlanLoading ? (
+              <div className="text-center my-4">
+                Generating meal plan... give me a sec - its my first day on the
+                job!
+              </div>
+            ) : (
+              <div className="flex justify-center gap-4 my-4">
+                <button
+                  className="bg-black text-white py-2 px-4 rounded-lg"
+                  onClick={saveMeals}
+                >
+                  &rarr; Save Meal Plan
+                </button>
+              </div>
+            )}
+          </div>
+          <div className="w-2/6 pl-4">
+            <div className="mt-4 bg-white p-4 border-2 border-black rounded-xl shadow-sm w-full text-center">
+              <p className="font-bold mb-2">
+                Missing something? Enter your preferences. (Leave blank for
+                recipe suggestions based on initial input)
+              </p>
+              <textarea
+                value={preferences}
+                onChange={handlePreferencesChange}
+                className="pl-3 pt-1 border mt-2 block w-full h-24 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                placeholder="e.g. Give me more recipes that share ingredients with the recipes I currently have. I want a snack I can make quickly."
+              />
               <button
-                className="bg-black text-white py-2 px-4 rounded-lg"
-                onClick={moreRecipes}
+                onClick={handleGenerateRecipes}
+                className="mt-2 py-2 px-4 bg-black text-white font-semibold rounded-md shadow-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
-                + More Recipes!
-              </button>
-              <button
-                className="bg-black text-white py-2 px-4 rounded-lg"
-                onClick={saveMeals}
-              >
-                &rarr; Save Meal Plan
+                Generate 3 Recipes
               </button>
             </div>
-          )}
-        </>
+          </div>
+        </div>
       ) : (
         <p className="flex justify-center text-lg mt-10">
           Recipes loading... I promise I do not take too long :)
