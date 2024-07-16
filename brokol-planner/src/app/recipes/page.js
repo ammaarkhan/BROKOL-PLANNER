@@ -3,12 +3,16 @@
 import { useState, useEffect } from "react";
 import { generate } from "./actions";
 import { readStreamableValue } from "ai/rsc";
-import { saveMealPlanMetadata, saveRecipesAndShoppingList } from "../db";
+import {
+  saveMealPlanMetadata,
+  saveRecipesAndShoppingList,
+  addFavoriteRecipe,
+} from "../db";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import withAuth from "../firebase/withAuth";
-import useLogPage from '../hooks/useLogPage';
-import { analytics } from '../../config/firebase';
+import useLogPage from "../hooks/useLogPage";
+import { analytics } from "../../config/firebase";
 import { logEvent } from "firebase/analytics";
 
 // Force the page to be dynamic and allow streaming responses up to 30 seconds
@@ -16,7 +20,6 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 function Recipes({ searchParams }) {
-
   useLogPage();
 
   const {
@@ -103,10 +106,7 @@ function Recipes({ searchParams }) {
 
         try {
           const parsedRecipe = JSON.parse(partialOutput);
-          //   console.log("Parsed recipe:", parsedRecipe);
-
           setRecipeList((prevRecipeList) => [...prevRecipeList, parsedRecipe]);
-
           partialOutput = "";
         } catch (error) {
           // Ignore parsing errors until the data is fully accumulated
@@ -186,18 +186,42 @@ function Recipes({ searchParams }) {
   };
 
   const removeRecipe = (index) => {
-    logEvent(analytics, 'recipe_removed');
+    logEvent(analytics, "recipe_removed");
     setRecipeList((prevRecipeList) =>
       prevRecipeList.filter((_, i) => i !== index)
     );
   };
 
+  const addFavorite = async (recipeData, index) => {
+    logEvent(analytics, "recipe_favorited");
+    try {
+      await addFavoriteRecipe(uid, recipeData);
+
+      setRecipeList((prevRecipeList) =>
+        prevRecipeList.map((recipe, i) =>
+          i === index ? { ...recipe, favorited: true } : recipe
+        )
+      );
+
+      alert("Recipe added to favorites! You can access it from the home page.");
+    } catch (error) {
+      console.error("Error adding favorite recipe:", error);
+      alert("Failed to add favorite recipe.");
+    }
+  };
+
   return (
     <div>
-      <h1 className="text-4xl mb-4 font-bold text-center mt-10">Recipes</h1>
+      <h1 className="text-4xl mb-4 font-bold text-center mt-10">
+        Edit Your Meal Plan
+      </h1>
       {recipeList.length > 0 ? (
         <>
-          <RecipesView recipeStream={recipeList} removeRecipe={removeRecipe} />
+          <RecipesView
+            recipeStream={recipeList}
+            removeRecipe={removeRecipe}
+            addFavorite={addFavorite}
+          />
           {moreRecipesLoading && (
             <p className="flex justify-center text-md mt-3">
               More recipes loading... lemme see what i can find for you :)
@@ -234,7 +258,7 @@ function Recipes({ searchParams }) {
   );
 }
 
-function RecipesView({ recipeStream, removeRecipe }) {
+function RecipesView({ recipeStream, removeRecipe, addFavorite }) {
   return (
     <div className="flex flex-col gap-4 mt-4 max-w-4xl mx-auto">
       {recipeStream.map((recipeData, index) => (
@@ -244,12 +268,25 @@ function RecipesView({ recipeStream, removeRecipe }) {
         >
           <div className="flex items-center justify-between">
             <p className="font-bold text-xl">{recipeData.recipe?.name}</p>
-            <button
-              onClick={() => removeRecipe(index)}
-              className="text-red-500 hover:text-red-700"
-            >
-              Delete
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={() => addFavorite(recipeData, index)}
+                className={`${
+                  recipeData.favorited
+                    ? "text-gray-400 cursor-not-allowed"
+                    : "text-blue-500 hover:text-blue-700"
+                }`}
+                disabled={recipeData.favorited}
+              >
+                {recipeData.favorited ? "Favorited" : "Favorite"}
+              </button>
+              <button
+                onClick={() => removeRecipe(index)}
+                className="text-red-500 hover:text-red-700"
+              >
+                Delete
+              </button>
+            </div>
           </div>
           <div className="flex-1">
             <p className="font-medium text-md inline-block bg-gray-200 rounded-md px-3 py-1 mb-2">
