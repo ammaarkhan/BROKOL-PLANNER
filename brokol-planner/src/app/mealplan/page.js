@@ -6,12 +6,11 @@ import { db } from "../../config/firebase";
 import { collection, query, orderBy, limit, getDocs } from "firebase/firestore";
 import Link from "next/link";
 import withAuth from "../firebase/withAuth";
-import useLogPage from '../hooks/useLogPage';
+import useLogPage from "../hooks/useLogPage";
 
 function MealPlan() {
-  
   useLogPage();
-  
+
   const [recipeList, setRecipeList] = useState([]);
   const [shoppingList, setShoppingList] = useState([]);
   const [uid, setUid] = useState(null);
@@ -66,7 +65,7 @@ function MealPlan() {
       {recipeList.length > 0 ? (
         <div className="flex w-full max-w-6xl">
           <div className="w-4/6 pr-4">
-            <RecipesView recipeStream={recipeList} />
+            <RecipesView recipeList={recipeList} />
           </div>
           <div className="w-2/6 pl-4">
             {shoppingList.length > 0 && (
@@ -90,10 +89,10 @@ function MealPlan() {
   );
 }
 
-function RecipesView({ recipeStream }) {
+function RecipesView({ recipeList }) {
   return (
     <div className="flex flex-col gap-4 mt-4 max-w-4xl mx-auto">
-      {recipeStream.map((recipeData, index) => (
+      {recipeList.map((recipeData, index) => (
         <div
           className="flex flex-col gap-4 p-4 bg-white border-2 border-black rounded-xl shadow-sm"
           key={index}
