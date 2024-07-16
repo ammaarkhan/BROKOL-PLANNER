@@ -54,11 +54,12 @@ function Input() {
     "Vegan",
     "Vegetarian",
     "Halal",
-    "Keto",
     "Gluten-free",
+    "Dairy-free",
     "Low-carb",
     "Paleo",
-    "Dairy-free",
+    "Keto",
+    "Cesitarian"
   ];
 
   const handleChange = (e) => {
