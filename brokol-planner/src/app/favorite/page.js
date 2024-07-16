@@ -84,7 +84,7 @@ function Favorite() {
 
 function FavoriteRecipesView({ recipeStream, removeRecipe }) {
   return (
-    <div className="flex flex-col gap-4 mt-4">
+    <div className="flex flex-col gap-4 mt-4 mb-4">
       {recipeStream.map((recipeData, index) => (
         <div
           className="flex flex-col gap-4 p-4 bg-white border-2 border-black rounded-xl shadow-sm"
