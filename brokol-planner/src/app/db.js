@@ -47,4 +47,13 @@ const saveRecipesAndShoppingList = async (uid, mealPlanId, recipeList) => {
   });
 };
 
-export { saveMealPlanMetadata, saveRecipesAndShoppingList };
+const addFavoriteRecipe = async (uid, recipe) => {
+  if (!uid) {
+    throw new Error("User is not authenticated!");
+  }
+
+  const favoritesRef = collection(db, `users/${uid}/favorites`);
+  await addDoc(favoritesRef, recipe);
+};
+
+export { saveMealPlanMetadata, saveRecipesAndShoppingList, addFavoriteRecipe };
