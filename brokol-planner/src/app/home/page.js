@@ -19,12 +19,12 @@ function Home() {
           </Link>
           <Link href="/mealplan">
             <div className="w-48 h-32 font-bold bg-white border-2 border-black text-black text-xl rounded-lg hover:bg-gray-200 cursor-pointer flex items-center justify-center text-center">
-              View current meal plan
+              View current<br></br>meal plan
             </div>
           </Link>
           <Link href="/favorite">
             <div className="w-48 h-32 font-bold bg-white border-2 border-black text-black text-xl rounded-lg hover:bg-gray-200 cursor-pointer flex items-center justify-center text-center">
-              View favorited recipes
+              View favorite recipes
             </div>
           </Link>
         </div>
