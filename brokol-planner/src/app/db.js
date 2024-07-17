@@ -32,9 +32,12 @@ const saveRecipesAndShoppingList = async (uid, mealPlanId, recipeList) => {
     [ 
       { 
         "name": "string",
-        "amount": "string"
+        "amount": "string",
+        "category": "string"
       },
-    ]`;
+    ]
+    The category should be one of these 6 options: "Produce (Fruit & Vegetables)", "Meat & Seafood", "Dairy & Eggs", "Bakery & Bread", "Dry Goods & Canned Foods", "Other".
+    `;
 
   const output = await generateShoppingList(prompt);
   const cleanedOutput = output.replace(/```json|```/g, "").trim();
