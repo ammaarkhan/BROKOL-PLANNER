@@ -329,10 +329,10 @@ function Input() {
             </div>
           </div>
         </div>
-        <div className="flex justify-center mt-6">
+        <div className="flex justify-center mt-4">
           <button
             type="submit"
-            className="mt-6 py-2 px-4 bg-black text-white font-semibold rounded-md shadow-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="py-2 px-4 bg-black text-white font-semibold rounded-md shadow-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
             Submit
           </button>
