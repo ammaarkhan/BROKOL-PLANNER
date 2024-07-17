@@ -99,7 +99,11 @@ function Input() {
           ...formData,
           dietaryPreferences: formData.dietaryPreferences.join(", "), // To convert from array to string
         }).toString();
-        router.push(`/recipes?${params}`);
+        if (formData.favRecipes === "Yes") {
+          router.push(`/addfavouriterecipes?${params}`);
+        } else {
+          router.push(`/recipes?${params}`);
+        }
       } catch (error) {
         console.error("Error saving data: ", error);
       }
