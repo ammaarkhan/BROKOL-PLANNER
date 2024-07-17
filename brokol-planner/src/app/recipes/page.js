@@ -23,18 +23,19 @@ function Recipes({ searchParams }) {
   useLogPage();
 
   const {
-    mealsPerDay,
-    daysPerWeek,
-    prepTime,
+    breakfastMealsPerWeek,
+    lunchDinnerMealsPerWeek,
     servingsPerMeal,
+    prepTime,
+    skillLevel,
     dietaryPreferences,
     weeklyFeeling,
-    skillLevel,
+    favRecipes,
   } = searchParams;
 
   const router = useRouter();
 
-  const mealsPerWeek = mealsPerDay * daysPerWeek;
+  //const mealsPerWeek = mealsPerDay * daysPerWeek;
 
   const [outputText, setOutputText] = useState("");
   const [recipeList, setRecipeList] = useState([]);
@@ -46,7 +47,7 @@ function Recipes({ searchParams }) {
   const [preferences, setPreferences] = useState("");
 
   const prompt = `
-  Output ${mealsPerWeek} recipes. Assume I have have no precooked items. Give realistic preparation times please and don't output the same recipe twice. Consider the following preferences:
+  Output ${breakfastMealsPerWeek} breakfast recipes and ${lunchDinnerMealsPerWeek} lunch/dinner recipes. Assume I have have no precooked items. Give realistic preparation times please and don't output the same recipe twice. Consider the following preferences:
     - Prep time: ${prepTime} minutes
     - Portions needed per meal: ${servingsPerMeal}
     - Dietary preferences: ${dietaryPreferences}
