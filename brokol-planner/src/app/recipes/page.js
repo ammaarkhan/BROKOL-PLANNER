@@ -35,7 +35,6 @@ function Recipes({ searchParams }) {
 
   const router = useRouter();
 
-  //const mealsPerWeek = mealsPerDay * daysPerWeek;
 
   const [outputText, setOutputText] = useState("");
   const [recipeList, setRecipeList] = useState([]);
