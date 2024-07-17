@@ -100,7 +100,7 @@ function Input() {
           dietaryPreferences: formData.dietaryPreferences.join(", "), // To convert from array to string
         }).toString();
         if (formData.favRecipes === "Yes") {
-          router.push(`/addfavouriterecipes?${params}`);
+          router.push(`/selectfavrecipe?${params}`);
         } else {
           router.push(`/recipes?${params}`);
         }
