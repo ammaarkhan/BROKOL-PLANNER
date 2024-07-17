@@ -60,7 +60,7 @@ function Input() {
     "Low-carb",
     "Paleo",
     "Keto",
-    "Cesitarian"
+    "Pescatarian",
   ];
 
   const handleChange = (e) => {
@@ -117,38 +117,36 @@ function Input() {
         <h1 className="text-2xl font-bold mb-6 text-center">Meal Planner</h1>
         <div className="grid grid-cols-2 gap-6">
           <div>
-          <label className="block mb-4">
-            <span className="font-bold">1. How many meals per week?</span>
-            <div className="mt-2">
-              <div className="flex items-center mb-2">
-                <span className="ml-4 mr-11 font-bold">Breakfast</span>
-                <input
-                  type="number"
-                  name="breakfastMealsPerWeek"
-                  value={formData.breakfastMealsPerWeek}
-                  onChange={handleChange}
-                  className="h-8 pl-3 border border-gray-300 block w-40 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                  placeholder="Input a number"
-                />
+            <label className="block mb-4">
+              <span className="font-bold">1. How many meals per week?</span>
+              <div className="mt-2">
+                <div className="flex items-center mb-2">
+                  <span className="ml-4 mr-11 font-bold">Breakfast</span>
+                  <input
+                    type="number"
+                    name="breakfastMealsPerWeek"
+                    value={formData.breakfastMealsPerWeek}
+                    onChange={handleChange}
+                    className="h-8 pl-3 border border-gray-300 block w-40 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                    placeholder="Input a number"
+                  />
+                </div>
+                <div className="flex items-center">
+                  <span className="ml-4 mr-4 font-bold">Lunch/dinner</span>
+                  <input
+                    type="number"
+                    name="lunchDinnerMealsPerWeek"
+                    value={formData.lunchDinnerMealsPerWeek}
+                    onChange={handleChange}
+                    className="h-8 pl-3 border border-gray-300 block w-40 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                    placeholder="Input a number"
+                  />
+                </div>
               </div>
-              <div className="flex items-center">
-                <span className="ml-4 mr-4 font-bold">Lunch/dinner</span>
-                <input
-                  type="number"
-                  name="lunchDinnerMealsPerWeek"
-                  value={formData.lunchDinnerMealsPerWeek}
-                  onChange={handleChange}
-                  className="h-8 pl-3 border border-gray-300 block w-40 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                  placeholder="Input a number"
-                />
-              </div>
-            </div>
-          </label>
+            </label>
 
             <label className="block mb-4">
-              <span className="font-bold">
-                2. How many servings per meal?
-              </span>
+              <span className="font-bold">2. How many servings per meal?</span>
               <input
                 type="number"
                 name="servingsPerMeal"
@@ -287,7 +285,9 @@ function Input() {
                 6. What&apos;s your food mood this week?
               </span>
               <p className="ml-5">
-    Include any ingredients you might have, cravings, dietary preferences, allergens, preferred cuisines, cooking techniques, shopping volume, or anything else!
+                Include any ingredients you might have, cravings, dietary
+                preferences, allergens, preferred cuisines, cooking techniques,
+                shopping volume, or anything else!
               </p>
               <textarea
                 name="weeklyFeeling"
@@ -299,7 +299,8 @@ function Input() {
             </label>
             <div className="block mb-4 mt-6">
               <span className="font-bold">
-                7. Would you like to include your favorite &nbsp;&nbsp;&nbsp;&nbsp;recipes? (Select on the next page)
+                7. Would you like to include your favorite
+                &nbsp;&nbsp;&nbsp;&nbsp;recipes? (Select on the next page)
               </span>
               <div className="ml-4 mt-2 flex space-x-8">
                 <label className="inline-flex items-center">
