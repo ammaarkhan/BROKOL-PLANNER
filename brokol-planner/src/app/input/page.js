@@ -284,7 +284,7 @@ function Input() {
             </label>
             <label className="block mb-4">
               <span className="font-bold">
-                6. What's your food mood this week?
+                6. What&apos;s your food mood this week?
               </span>
               <p className="ml-5">
     Include any ingredients you might have, cravings, dietary preferences, allergens, preferred cuisines, cooking techniques, shopping volume, or anything else!
