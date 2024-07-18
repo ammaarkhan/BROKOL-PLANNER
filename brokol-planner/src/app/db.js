@@ -23,8 +23,18 @@ const saveRecipesAndShoppingList = async (uid, mealPlanId, recipeList) => {
   }
 
   const ingredients = recipeList
-    .map((recipe) => recipe.recipe.ingredients)
+    .map((recipe) => recipe.recipe.ingredients || [])
     .flat();
+
+  // Check if there are any ingredients
+  if (ingredients.length === 0) {
+    await updateDoc(doc(db, `users/${uid}/mealPlans/${mealPlanId}`), {
+      recipes: recipeList,
+      shoppingList: [], // Set shopping list to an empty array if no ingredients
+    });
+    return;
+  }
+
   const ingredientList = ingredients
     .map((ingredient) => `${ingredient.name} (${ingredient.amount})`)
     .join(", ");
@@ -32,13 +42,15 @@ const saveRecipesAndShoppingList = async (uid, mealPlanId, recipeList) => {
     [ 
       { 
         "name": "string",
-        "amount": "string"
+        "amount": "string",
+        "category": "string"
       },
-    ]`;
+    ]
+    The category should be one of these 6 options: "Produce (Fruit & Vegetables)", "Meat & Seafood", "Dairy & Eggs", "Bakery & Bread", "Dry Goods & Canned Foods", "Other".
+    `;
 
   const output = await generateShoppingList(prompt);
   const cleanedOutput = output.replace(/```json|```/g, "").trim();
-  console.log("Cleaned output:", cleanedOutput);
   const shoppingList = JSON.parse(cleanedOutput);
 
   await updateDoc(doc(db, `users/${uid}/mealPlans/${mealPlanId}`), {
@@ -47,4 +59,15 @@ const saveRecipesAndShoppingList = async (uid, mealPlanId, recipeList) => {
   });
 };
 
-export { saveMealPlanMetadata, saveRecipesAndShoppingList };
+const addFavoriteRecipe = async (uid, recipe) => {
+  if (!uid) {
+    throw new Error("User is not authenticated!");
+  }
+
+  const recipeWithFavorite = { ...recipe, favorited: true };
+
+  const favoritesRef = collection(db, `users/${uid}/favorites`);
+  await addDoc(favoritesRef, recipeWithFavorite);
+};
+
+export { saveMealPlanMetadata, saveRecipesAndShoppingList, addFavoriteRecipe };
