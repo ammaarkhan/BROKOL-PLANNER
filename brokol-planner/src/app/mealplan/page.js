@@ -11,9 +11,25 @@ import useLogPage from "../hooks/useLogPage";
 function MealPlan() {
   useLogPage();
 
+  
+
   const [recipeList, setRecipeList] = useState([]);
   const [shoppingList, setShoppingList] = useState([]);
   const [uid, setUid] = useState(null);
+
+  const categories = [
+    "Produce (Fruit & Vegetables)",
+    "Meat & Seafood",
+    "Dairy & Eggs",
+    "Bakery & Bread",
+    "Dry Goods & Canned Foods",
+    "Other",
+  ];
+  
+  const categorizedList = categories.map((category) => ({
+    category,
+    items: shoppingList.filter((item) => item.category === category),
+  }));
 
   useEffect(() => {
     const auth = getAuth();
@@ -71,13 +87,21 @@ function MealPlan() {
             {shoppingList.length > 0 && (
               <div className="mt-4 bg-gray-200 rounded-xl px-4 py-4">
                 <h2 className="text-3xl mb-4 font-bold">Grocery List</h2>
-                <ul className="list-disc list-inside text-gray-700">
-                  {shoppingList.map((item, index) => (
-                    <li key={index}>
-                      {item.amount} {item.name}
-                    </li>
-                  ))}
-                </ul>
+                {categorizedList.map(
+                  ({ category, items }) =>
+                    items.length > 0 && (
+                      <div key={category} className="mb-4">
+                        <h3 className="text-xl font-bold">{category}</h3>
+                        <ul className="list-disc list-inside text-gray-700">
+                          {items.map((item, index) => (
+                            <li key={index}>
+                              {item.amount} {item.name}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )
+                )}
               </div>
             )}
           </div>
