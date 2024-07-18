@@ -328,7 +328,6 @@ function Input() {
                     className="form-radio"
                   />
                   <span className="ml-2">No</span>
-                  <span className="ml-2">No</span>
                 </label>
               </div>
             </div>
