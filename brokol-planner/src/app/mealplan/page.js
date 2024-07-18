@@ -11,8 +11,6 @@ import useLogPage from "../hooks/useLogPage";
 function MealPlan() {
   useLogPage();
 
-  
-
   const [recipeList, setRecipeList] = useState([]);
   const [shoppingList, setShoppingList] = useState([]);
   const [uid, setUid] = useState(null);
@@ -25,7 +23,7 @@ function MealPlan() {
     "Dry Goods & Canned Foods",
     "Other",
   ];
-  
+
   const categorizedList = categories.map((category) => ({
     category,
     items: shoppingList.filter((item) => item.category === category),
