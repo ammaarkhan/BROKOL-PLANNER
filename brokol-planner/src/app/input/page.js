@@ -21,7 +21,7 @@ function Input() {
     skillLevel: "",
     dietaryPreferences: [],
     weeklyFeeling: "",
-    favRecipes: "",
+    selectFavRecipes: "",
   });
 
   const [uid, setUid] = useState(null);
@@ -99,8 +99,8 @@ function Input() {
           ...formData,
           dietaryPreferences: formData.dietaryPreferences.join(", "), // To convert from array to string
         }).toString();
-        if (formData.favRecipes === "Yes") {
-          router.push(`/addfavouriterecipes?${params}`);
+        if (formData.selectFavRecipes === "Yes") {
+          router.push(`/selectfavrecipe?${params}`);
         } else {
           router.push(`/recipes?${params}`);
         }
@@ -306,9 +306,9 @@ function Input() {
                 <label className="inline-flex items-center">
                   <input
                     type="radio"
-                    name="favRecipes"
+                    name="selectFavRecipes"
                     value="Yes"
-                    checked={formData.favRecipes === "Yes"}
+                    checked={formData.selectFavRecipes === "Yes"}
                     onChange={handleChange}
                     className="form-radio"
                   />
@@ -317,9 +317,9 @@ function Input() {
                 <label className="inline-flex items-center">
                   <input
                     type="radio"
-                    name="favRecipes"
+                    name="selectFavRecipes"
                     value="No"
-                    checked={formData.favRecipes === "No"}
+                    checked={formData.selectFavRecipes === "No"}
                     onChange={handleChange}
                     className="form-radio"
                   />

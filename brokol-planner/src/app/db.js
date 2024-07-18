@@ -52,8 +52,10 @@ const addFavoriteRecipe = async (uid, recipe) => {
     throw new Error("User is not authenticated!");
   }
 
+  const recipeWithFavorite = { ...recipe, favorited: true };
+
   const favoritesRef = collection(db, `users/${uid}/favorites`);
-  await addDoc(favoritesRef, recipe);
+  await addDoc(favoritesRef, recipeWithFavorite);
 };
 
 export { saveMealPlanMetadata, saveRecipesAndShoppingList, addFavoriteRecipe };

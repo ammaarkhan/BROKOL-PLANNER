@@ -77,10 +77,15 @@ function Favorite() {
       await addDoc(favoritesRef, {
         recipe: { name: newFavoriteRecipe },
         manualAdd: true,
+        favorited: true,
       });
       setFavoriteRecipes([
         ...favoriteRecipes,
-        { recipe: { name: newFavoriteRecipe }, manualAdd: true },
+        {
+          recipe: { name: newFavoriteRecipe },
+          manualAdd: true,
+          favorited: true,
+        },
       ]);
       setNewFavoriteRecipe("");
     } catch (error) {

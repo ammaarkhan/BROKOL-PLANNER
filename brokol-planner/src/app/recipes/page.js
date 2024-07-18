@@ -14,6 +14,8 @@ import withAuth from "../firebase/withAuth";
 import useLogPage from "../hooks/useLogPage";
 import { analytics } from "../../config/firebase";
 import { logEvent } from "firebase/analytics";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../../config/firebase";
 
 // Force the page to be dynamic and allow streaming responses up to 30 seconds
 export const dynamic = "force-dynamic";
@@ -30,18 +32,22 @@ function Recipes({ searchParams }) {
     skillLevel,
     dietaryPreferences,
     weeklyFeeling,
-    favRecipes,
+    selectFavRecipes,
+    favoriteRecipes,
   } = searchParams;
 
-  const router = useRouter();
+  const parsedFavoriteRecipes = favoriteRecipes
+    ? JSON.parse(favoriteRecipes)
+    : [];
 
+  const router = useRouter();
 
   const [outputText, setOutputText] = useState("");
   const [recipeList, setRecipeList] = useState([]);
   const [deletedRecipes, setDeletedRecipes] = useState([]);
   const [recipeNames, setRecipeNames] = useState([]);
   const [uid, setUid] = useState(null);
-  const [moreRecipesLoading, setMoreRecipesLoading] = useState(false);
+  const [recipesLoading, setRecipesLoading] = useState(false);
   const [mealPlanLoading, setMealPlanLoading] = useState(false);
   const [preferences, setPreferences] = useState("");
 
@@ -103,25 +109,63 @@ function Recipes({ searchParams }) {
   };
 
   useEffect(() => {
+    const fetchFavoriteRecipes = async () => {
+      try {
+        if (!uid) return;
+
+        const recipesRef = collection(db, `users/${uid}/favorites`);
+        const snapshot = await getDocs(recipesRef);
+
+        const fetchedRecipes = snapshot.docs
+          .map((doc) => doc.data())
+          .filter((recipe) =>
+            parsedFavoriteRecipes.includes(recipe.recipe.name)
+          );
+
+        setRecipeList((prevRecipeList) => [
+          ...prevRecipeList,
+          ...fetchedRecipes,
+        ]);
+      } catch (error) {
+        console.error("Error fetching favorite recipes:", error);
+      }
+    };
+
+    if (parsedFavoriteRecipes.length > 0) {
+      fetchFavoriteRecipes();
+    }
+  }, [uid]);
+
+  useEffect(() => {
     const fetchRecipes = async () => {
-      const { output } = await generate(prompt);
+      setRecipesLoading(true);
+      try {
+        const { output } = await generate(prompt);
 
-      let accumulatedOutput = "";
-      let partialOutput = "";
+        let accumulatedOutput = "";
+        let partialOutput = "";
 
-      for await (const chunk of readStreamableValue(output)) {
-        accumulatedOutput += chunk;
-        partialOutput += chunk;
+        for await (const chunk of readStreamableValue(output)) {
+          accumulatedOutput += chunk;
+          partialOutput += chunk;
 
-        try {
-          const parsedRecipe = JSON.parse(partialOutput);
-          setRecipeList((prevRecipeList) => [...prevRecipeList, parsedRecipe]);
-          partialOutput = "";
-        } catch (error) {
-          // Ignore parsing errors until the data is fully accumulated
+          try {
+            const parsedRecipe = JSON.parse(partialOutput);
+            setRecipeList((prevRecipeList) => [
+              ...prevRecipeList,
+              parsedRecipe,
+            ]);
+            partialOutput = "";
+          } catch (error) {
+            // Ignore parsing errors until the data is fully accumulated
+          }
+
+          setOutputText(accumulatedOutput);
         }
-
-        setOutputText(accumulatedOutput);
+      } catch (error) {
+        console.error("Error generating more recipes:", error);
+      } finally {
+        setRecipesLoading(false);
       }
     };
 
@@ -130,7 +174,7 @@ function Recipes({ searchParams }) {
 
   const handleGenerateRecipes = async () => {
     logEvent(analytics, "more_recipes");
-    setMoreRecipesLoading(true);
+    setRecipesLoading(true);
     try {
       const { output } = await generate(promptTwo);
 
@@ -154,7 +198,7 @@ function Recipes({ searchParams }) {
     } catch (error) {
       console.error("Error generating more recipes:", error);
     } finally {
-      setMoreRecipesLoading(false);
+      setRecipesLoading(false);
     }
   };
 
@@ -238,7 +282,7 @@ function Recipes({ searchParams }) {
               removeRecipe={removeRecipe}
               addFavorite={addFavorite}
             />
-            {moreRecipesLoading && (
+            {recipesLoading && (
               <p className="flex justify-center text-md mt-3">
                 More recipes loading... lemme see what i can find for you :)
               </p>
@@ -319,30 +363,32 @@ function RecipesView({ recipeStream, removeRecipe, addFavorite }) {
               </button>
             </div>
           </div>
-          <div className="flex-1">
-            <p className="font-medium text-md inline-block bg-gray-200 rounded-md px-3 py-1 mb-2">
-              Preparation Time: {recipeData.recipe?.prepTime} | Effort:{" "}
-              {recipeData.recipe?.effort}
-            </p>
-            <div className="mb-2">
-              <p className="font-bold mb-1">Ingredients:</p>
-              <ul className="list-disc list-inside text-gray-700">
-                {recipeData.recipe?.ingredients?.map((ingredient, idx) => (
-                  <li key={idx}>
-                    {ingredient?.amount} {ingredient?.name}
-                  </li>
-                ))}
-              </ul>
+          {!recipeData.manualAdd && (
+            <div className="flex-1">
+              <p className="font-medium text-md inline-block bg-gray-200 rounded-md px-3 py-1 mb-2">
+                Preparation Time: {recipeData.recipe?.prepTime} | Effort:{" "}
+                {recipeData.recipe?.effort}
+              </p>
+              <div className="mb-2">
+                <p className="font-bold mb-1">Ingredients:</p>
+                <ul className="list-disc list-inside text-gray-700">
+                  {recipeData.recipe?.ingredients?.map((ingredient, idx) => (
+                    <li key={idx}>
+                      {ingredient?.amount} {ingredient?.name}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <p className="font-bold mb-1">Recipe:</p>
+                <ol className="list-decimal list-inside text-gray-700">
+                  {recipeData.recipe?.steps?.map((step, idx) => (
+                    <li key={idx}>{step}</li>
+                  ))}
+                </ol>
+              </div>
             </div>
-            <div>
-              <p className="font-bold mb-1">Recipe:</p>
-              <ol className="list-decimal list-inside text-gray-700">
-                {recipeData.recipe?.steps?.map((step, idx) => (
-                  <li key={idx}>{step}</li>
-                ))}
-              </ol>
-            </div>
-          </div>
+          )}
         </div>
       ))}
     </div>
