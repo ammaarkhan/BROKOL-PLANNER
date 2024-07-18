@@ -14,13 +14,14 @@ function Input() {
   useLogPage();
 
   const [formData, setFormData] = useState({
-    mealsPerDay: "",
-    daysPerWeek: "",
-    prepTime: "",
+    breakfastMealsPerWeek: "",
+    lunchDinnerMealsPerWeek: "",
     servingsPerMeal: "",
+    prepTime: "",
+    skillLevel: "",
     dietaryPreferences: [],
     weeklyFeeling: "",
-    skillLevel: "",
+    favRecipes: "",
   });
 
   const [uid, setUid] = useState(null);
@@ -54,11 +55,12 @@ function Input() {
     "Vegan",
     "Vegetarian",
     "Halal",
-    "Keto",
     "Gluten-free",
+    "Dairy-free",
     "Low-carb",
     "Paleo",
-    "Dairy-free",
+    "Keto",
+    "Pescatarian",
   ];
 
   const handleChange = (e) => {
@@ -97,7 +99,11 @@ function Input() {
           ...formData,
           dietaryPreferences: formData.dietaryPreferences.join(", "), // To convert from array to string
         }).toString();
-        router.push(`/recipes?${params}`);
+        if (formData.favRecipes === "Yes") {
+          router.push(`/addfavouriterecipes?${params}`);
+        } else {
+          router.push(`/recipes?${params}`);
+        }
       } catch (error) {
         console.error("Error saving data: ", error);
       }
@@ -112,47 +118,35 @@ function Input() {
         <div className="grid grid-cols-2 gap-6">
           <div>
             <label className="block mb-4">
-              <span className="font-bold">1. How many meals per day?</span>
-              <input
-                type="number"
-                name="mealsPerDay"
-                value={formData.mealsPerDay}
-                onChange={handleChange}
-                className="ml-4 h-8 pl-3 border border-gray-300 mt-2 block w-40 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                placeholder="Input a number"
-              />
+              <span className="font-bold">1. How many meals per week?</span>
+              <div className="mt-2">
+                <div className="flex items-center mb-2">
+                  <span className="ml-4 mr-11 font-bold">Breakfast</span>
+                  <input
+                    type="number"
+                    name="breakfastMealsPerWeek"
+                    value={formData.breakfastMealsPerWeek}
+                    onChange={handleChange}
+                    className="h-8 pl-3 border border-gray-300 block w-40 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                    placeholder="Input a number"
+                  />
+                </div>
+                <div className="flex items-center">
+                  <span className="ml-4 mr-4 font-bold">Lunch/dinner</span>
+                  <input
+                    type="number"
+                    name="lunchDinnerMealsPerWeek"
+                    value={formData.lunchDinnerMealsPerWeek}
+                    onChange={handleChange}
+                    className="h-8 pl-3 border border-gray-300 block w-40 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                    placeholder="Input a number"
+                  />
+                </div>
+              </div>
             </label>
 
             <label className="block mb-4">
-              <span className="font-bold">
-                2. How many days a week do you cook?
-              </span>
-              <input
-                type="number"
-                name="daysPerWeek"
-                value={formData.daysPerWeek}
-                onChange={handleChange}
-                className="ml-4 h-8 pl-3 border mt-2 block w-40 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                placeholder="Input a number"
-              />
-            </label>
-
-            <label className="block mb-4">
-              <span className="font-bold">
-                3. How much time can you spend on meal preparation? (in minutes)
-              </span>
-              <input
-                type="number"
-                name="prepTime"
-                value={formData.prepTime}
-                onChange={handleChange}
-                className="ml-4 h-8 pl-3 border mt-2 block w-40 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                placeholder="Input a number"
-              />
-            </label>
-
-            <label className="block mb-4">
-              <span className="font-bold">4. How many servings per meal?</span>
+              <span className="font-bold">2. How many servings per meal?</span>
               <input
                 type="number"
                 name="servingsPerMeal"
@@ -162,6 +156,107 @@ function Input() {
                 placeholder="Input a number"
               />
             </label>
+
+            <div className="mb-4 grid-rows-4">
+              <span className="font-bold">
+                3. How much time can you spend on meal &emsp;&nbsp;preparation?
+              </span>
+              <div className="mt-2 ml-4">
+                <label className="inline-flex items-center">
+                  <input
+                    type="radio"
+                    name="prepTime"
+                    value="Less than 15 minutes"
+                    checked={formData.prepTime === "Less than 15 minutes"}
+                    onChange={handleChange}
+                    className="form-radio"
+                  />
+                  <span className="ml-2">Less than 15 minutes</span>
+                </label>
+              </div>
+              <div className="mt-2 ml-4">
+                <label className="inline-flex items-center">
+                  <input
+                    type="radio"
+                    name="prepTime"
+                    value="15 to 30 minutes"
+                    checked={formData.prepTime === "15 to 30 minutes"}
+                    onChange={handleChange}
+                    className="form-radio"
+                  />
+                  <span className="ml-2">15 to 30 minutes</span>
+                </label>
+              </div>
+              <div className="mt-2 ml-4">
+                <label className="inline-flex items-center">
+                  <input
+                    type="radio"
+                    name="prepTime"
+                    value="30 to 60 minutes"
+                    checked={formData.prepTime === "30 to 60 minutes"}
+                    onChange={handleChange}
+                    className="form-radio"
+                  />
+                  <span className="ml-2">30 to 60 minutes</span>
+                </label>
+              </div>
+              <div className="mt-2 ml-4">
+                <label className="inline-flex items-center">
+                  <input
+                    type="radio"
+                    name="prepTime"
+                    value="More than 60 minutes"
+                    checked={formData.prepTime === "More than 60 minutes"}
+                    onChange={handleChange}
+                    className="form-radio"
+                  />
+                  <span className="ml-2">More than 60 minutes</span>
+                </label>
+              </div>
+            </div>
+
+            <span className="font-bold">
+              4. What is your cooking skill level?
+            </span>
+            <div className="mt-2 ml-4">
+              <label className="inline-flex items-center">
+                <input
+                  type="radio"
+                  name="skillLevel"
+                  value="Beginner"
+                  checked={formData.skillLevel === "Beginner"}
+                  onChange={handleChange}
+                  className="form-radio"
+                />
+                <span className="ml-2">Beginner</span>
+              </label>
+            </div>
+            <div className="mt-2 ml-4">
+              <label className="inline-flex items-center">
+                <input
+                  type="radio"
+                  name="skillLevel"
+                  value="Intermediate"
+                  checked={formData.skillLevel === "Intermediate"}
+                  onChange={handleChange}
+                  className="form-radio"
+                />
+                <span className="ml-2">Intermediate</span>
+              </label>
+            </div>
+            <div className="mt-2 ml-4">
+              <label className="inline-flex items-center">
+                <input
+                  type="radio"
+                  name="skillLevel"
+                  value="Advanced"
+                  checked={formData.skillLevel === "Advanced"}
+                  onChange={handleChange}
+                  className="form-radio"
+                />
+                <span className="ml-2">Advanced</span>
+              </label>
+            </div>
           </div>
 
           <div>
@@ -187,62 +282,57 @@ function Input() {
             </label>
             <label className="block mb-4">
               <span className="font-bold">
-                6. What are you feeling this week?
+                6. What&apos;s your food mood this week?
               </span>
+              <p className="ml-5">
+                Include any ingredients you might have, cravings, dietary
+                preferences, allergens, preferred cuisines, cooking techniques,
+                shopping volume, or anything else!
+              </p>
               <textarea
                 name="weeklyFeeling"
                 value={formData.weeklyFeeling}
                 onChange={handleChange}
-                className="pl-3 pt-1 border mt-2 block w-full h-24 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                placeholder="e.g. i want to eat healthy this week. i have some pasta and mushroom"
+                className="ml-3 pl-3 pt-1 border mt-2 block w-80 h-40 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                placeholder="e.g. I want to eat healthy this week. I have some pasta and mushrooms at home. I’m craving spicy and vegetarian food, looking for kid-friendly options, and planning a special dinner on Friday."
               />
             </label>
-            <div className="block mb-4">
+            <div className="block mb-4 mt-6">
               <span className="font-bold">
-                7. What is your cooking skill level?
+                7. Would you like to include your favorite
+                &nbsp;&nbsp;&nbsp;&nbsp;recipes? (Select on the next page)
               </span>
-              <div className="mt-2 flex space-x-8">
+              <div className="ml-4 mt-2 flex space-x-8">
                 <label className="inline-flex items-center">
                   <input
                     type="radio"
-                    name="skillLevel"
-                    value="Beginner"
-                    checked={formData.skillLevel === "Beginner"}
+                    name="favRecipes"
+                    value="Yes"
+                    checked={formData.favRecipes === "Yes"}
                     onChange={handleChange}
                     className="form-radio"
                   />
-                  <span className="ml-2">Beginner</span>
+                  <span className="ml-2">Yes</span>
                 </label>
                 <label className="inline-flex items-center">
                   <input
                     type="radio"
-                    name="skillLevel"
-                    value="Intermediate"
-                    checked={formData.skillLevel === "Intermediate"}
+                    name="favRecipes"
+                    value="No"
+                    checked={formData.favRecipes === "No"}
                     onChange={handleChange}
                     className="form-radio"
                   />
-                  <span className="ml-2">Intermediate</span>
-                </label>
-                <label className="inline-flex items-center">
-                  <input
-                    type="radio"
-                    name="skillLevel"
-                    value="Advanced"
-                    checked={formData.skillLevel === "Advanced"}
-                    onChange={handleChange}
-                    className="form-radio"
-                  />
-                  <span className="ml-2">Advanced</span>
+                  <span className="ml-2">No</span>
                 </label>
               </div>
             </div>
           </div>
         </div>
-        <div className="flex justify-center mt-6">
+        <div className="flex justify-center mt-4">
           <button
             type="submit"
-            className="mt-6 py-2 px-4 bg-black text-white font-semibold rounded-md shadow-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="py-2 px-4 bg-black text-white font-semibold rounded-md shadow-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
             Submit
           </button>
