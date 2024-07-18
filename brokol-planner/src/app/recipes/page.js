@@ -52,7 +52,7 @@ function Recipes({ searchParams }) {
   const [preferences, setPreferences] = useState("");
 
   const prompt = `
-  Output ${breakfastMealsPerWeek} breakfast recipes and ${lunchDinnerMealsPerWeek} lunch/dinner recipes. Assume I have have no precooked items. Give realistic preparation times please and don't output the same recipe twice. Consider the following preferences:
+  Output ${breakfastMealsPerWeek} breakfast recipes and ${lunchDinnerMealsPerWeek} lunch/dinner recipes. I currently have: ${parsedFavoriteRecipes}. Assume I have have no precooked items. Give realistic preparation times please and don't output the same recipe twice. Consider the following preferences:
     - Prep time: ${prepTime} minutes
     - Portions needed per meal: ${servingsPerMeal}
     - Dietary preferences: ${dietaryPreferences}
