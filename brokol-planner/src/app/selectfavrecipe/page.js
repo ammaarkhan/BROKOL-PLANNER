@@ -62,13 +62,13 @@ function SelectFavRecipes({ searchParams }) {
       .filter((recipe) => selectedFavorites.includes(recipe.id))
       .map((recipe) => recipe.recipe.name);
 
-    // Merge with existing searchParams
-    const params = new URLSearchParams(searchParams);
+    // Fetch existing URL search parameters
+    const currentParams = new URLSearchParams(window.location.search);
 
     // Add favoriteRecipes as a JSON-encoded string
-    params.set("favoriteRecipes", JSON.stringify(selectedRecipes));
+    currentParams.set("favoriteRecipes", JSON.stringify(selectedRecipes));
 
-    router.push(`/recipes?${params.toString()}`);
+    router.push(`/recipes?${currentParams.toString()}`);
   };
 
   return (

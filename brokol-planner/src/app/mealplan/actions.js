@@ -8,7 +8,5 @@ export async function generateShoppingList(input) {
     model: openai("gpt-4o"),
     prompt: input,
   });
-
-  console.log("Generated text:", text);
   return text;
 }
