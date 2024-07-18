@@ -16,11 +16,7 @@ function Input() {
   const [formData, setFormData] = useState({
     breakfastMealsPerWeek: "",
     lunchDinnerMealsPerWeek: "",
-    breakfastMealsPerWeek: "",
-    lunchDinnerMealsPerWeek: "",
     servingsPerMeal: "",
-    prepTime: "",
-    skillLevel: "",
     prepTime: "",
     skillLevel: "",
     dietaryPreferences: [],
