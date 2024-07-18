@@ -16,7 +16,11 @@ function Input() {
   const [formData, setFormData] = useState({
     breakfastMealsPerWeek: "",
     lunchDinnerMealsPerWeek: "",
+    breakfastMealsPerWeek: "",
+    lunchDinnerMealsPerWeek: "",
     servingsPerMeal: "",
+    prepTime: "",
+    skillLevel: "",
     prepTime: "",
     skillLevel: "",
     dietaryPreferences: [],
@@ -323,6 +327,7 @@ function Input() {
                     onChange={handleChange}
                     className="form-radio"
                   />
+                  <span className="ml-2">No</span>
                   <span className="ml-2">No</span>
                 </label>
               </div>
