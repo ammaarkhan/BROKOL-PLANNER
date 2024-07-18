@@ -73,6 +73,7 @@ function Favorite() {
     }
 
     try {
+      logEvent(analytics, "recipe_favorited_manual");
       const favoritesRef = collection(db, `users/${uid}/favorites`);
       await addDoc(favoritesRef, {
         recipe: { name: newFavoriteRecipe },

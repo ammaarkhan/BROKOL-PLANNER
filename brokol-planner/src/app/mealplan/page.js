@@ -16,6 +16,8 @@ import {
 import Link from "next/link";
 import withAuth from "../firebase/withAuth";
 import useLogPage from "../hooks/useLogPage";
+import { analytics } from "../../config/firebase";
+import { logEvent } from "firebase/analytics";
 
 function MealPlan() {
   useLogPage();
@@ -78,7 +80,7 @@ function MealPlan() {
   }, [uid]);
 
   const addFavorite = async (recipeData, index) => {
-    // logEvent(analytics, "recipe_favorited");
+    logEvent(analytics, "recipe_favorited_mealplan_page");
     try {
       await addFavoriteRecipe(uid, recipeData);
       // Fetch the latest meal plan
