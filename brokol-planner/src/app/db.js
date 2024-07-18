@@ -23,8 +23,18 @@ const saveRecipesAndShoppingList = async (uid, mealPlanId, recipeList) => {
   }
 
   const ingredients = recipeList
-    .map((recipe) => recipe.recipe.ingredients)
+    .map((recipe) => recipe.recipe.ingredients || [])
     .flat();
+
+  // Check if there are any ingredients
+  if (ingredients.length === 0) {
+    await updateDoc(doc(db, `users/${uid}/mealPlans/${mealPlanId}`), {
+      recipes: recipeList,
+      shoppingList: [], // Set shopping list to an empty array if no ingredients
+    });
+    return;
+  }
+
   const ingredientList = ingredients
     .map((ingredient) => `${ingredient.name} (${ingredient.amount})`)
     .join(", ");
@@ -41,7 +51,6 @@ const saveRecipesAndShoppingList = async (uid, mealPlanId, recipeList) => {
 
   const output = await generateShoppingList(prompt);
   const cleanedOutput = output.replace(/```json|```/g, "").trim();
-  console.log("Cleaned output:", cleanedOutput);
   const shoppingList = JSON.parse(cleanedOutput);
 
   await updateDoc(doc(db, `users/${uid}/mealPlans/${mealPlanId}`), {
