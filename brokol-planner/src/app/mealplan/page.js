@@ -3,7 +3,16 @@
 import { useState, useEffect } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { db } from "../../config/firebase";
-import { collection, query, orderBy, limit, getDocs } from "firebase/firestore";
+import { addFavoriteRecipe } from "../db";
+import {
+  collection,
+  query,
+  orderBy,
+  limit,
+  getDocs,
+  updateDoc,
+  doc,
+} from "firebase/firestore";
 import Link from "next/link";
 import withAuth from "../firebase/withAuth";
 import useLogPage from "../hooks/useLogPage";
@@ -68,6 +77,45 @@ function MealPlan() {
     }
   }, [uid]);
 
+  const addFavorite = async (recipeData, index) => {
+    // logEvent(analytics, "recipe_favorited");
+    try {
+      await addFavoriteRecipe(uid, recipeData);
+      // Fetch the latest meal plan
+      const mealPlansRef = collection(db, `users/${uid}/mealPlans`);
+      const q = query(mealPlansRef, orderBy("dateAdded", "desc"), limit(1));
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        const mealPlanDoc = querySnapshot.docs[0];
+        const mealPlanData = mealPlanDoc.data();
+        const mealPlanId = mealPlanDoc.id;
+
+        // Update the recipe in the meal plan
+        const updatedRecipes = mealPlanData.recipes.map((recipe, i) =>
+          i === index ? { ...recipe, favorited: true } : recipe
+        );
+
+        // Update Firestore with the modified meal plan
+        await updateDoc(doc(db, `users/${uid}/mealPlans/${mealPlanId}`), {
+          recipes: updatedRecipes,
+        });
+
+        // Update the local state
+        setRecipeList(updatedRecipes);
+
+        alert(
+          "Recipe added to favorites! You can access it from the home page."
+        );
+      } else {
+        console.log("No meal plans found");
+      }
+    } catch (error) {
+      console.error("Error adding favorite recipe:", error);
+      alert("Failed to add favorite recipe.");
+    }
+  };
+
   return (
     <div className="flex flex-col items-center my-4">
       <button className="absolute left-4 bg-black text-white py-2 px-4 rounded-lg">
@@ -79,7 +127,7 @@ function MealPlan() {
       {recipeList.length > 0 ? (
         <div className="flex w-full max-w-6xl">
           <div className="w-4/6 pr-4">
-            <RecipesView recipeList={recipeList} />
+            <RecipesView recipeList={recipeList} addFavorite={addFavorite} />
           </div>
           <div className="w-2/6 pl-4">
             {shoppingList.length > 0 && (
@@ -111,7 +159,7 @@ function MealPlan() {
   );
 }
 
-function RecipesView({ recipeList }) {
+function RecipesView({ recipeList, addFavorite }) {
   return (
     <div className="flex flex-col gap-4 mt-4 max-w-4xl mx-auto">
       {recipeList.map((recipeData, index) => (
@@ -119,31 +167,48 @@ function RecipesView({ recipeList }) {
           className="flex flex-col gap-4 p-4 bg-white border-2 border-black rounded-xl shadow-sm"
           key={index}
         >
-          <div className="flex-1 space-y-2">
-            <p className="font-bold text-lg">{recipeData.recipe?.name}</p>
-            <p className="font-medium text-md inline-block bg-gray-200 rounded-md px-3 py-1 mb-2">
-              Preparation Time: {recipeData.recipe?.prepTime} | Effort:{" "}
-              {recipeData.recipe?.effort}
-            </p>
-            <div>
-              <p className="font-bold mb-1">Ingredients:</p>
-              <ul className="list-disc list-inside text-gray-700">
-                {recipeData.recipe?.ingredients?.map((ingredient, idx) => (
-                  <li key={idx}>
-                    {ingredient?.amount} {ingredient?.name}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <p className="font-bold mb-1">Recipe:</p>
-              <ol className="list-decimal list-inside text-gray-700">
-                {recipeData.recipe?.steps?.map((step, idx) => (
-                  <li key={idx}>{step}</li>
-                ))}
-              </ol>
+          <div className="flex items-center justify-between">
+            <p className="font-bold text-xl">{recipeData.recipe?.name}</p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => addFavorite(recipeData, index)}
+                className={`${
+                  recipeData.favorited
+                    ? "text-gray-400 cursor-not-allowed"
+                    : "text-blue-500 hover:text-blue-700"
+                }`}
+                disabled={recipeData.favorited}
+              >
+                {recipeData.favorited ? "Favorited" : "Favorite"}
+              </button>
             </div>
           </div>
+          {!recipeData.manualAdd && (
+            <div className="flex-1 space-y-2">
+              <p className="font-medium text-md inline-block bg-gray-200 rounded-md px-3 py-1 mb-2">
+                Preparation Time: {recipeData.recipe?.prepTime} | Effort:{" "}
+                {recipeData.recipe?.effort}
+              </p>
+              <div>
+                <p className="font-bold mb-1">Ingredients:</p>
+                <ul className="list-disc list-inside text-gray-700">
+                  {recipeData.recipe?.ingredients?.map((ingredient, idx) => (
+                    <li key={idx}>
+                      {ingredient?.amount} {ingredient?.name}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <p className="font-bold mb-1">Recipe:</p>
+                <ol className="list-decimal list-inside text-gray-700">
+                  {recipeData.recipe?.steps?.map((step, idx) => (
+                    <li key={idx}>{step}</li>
+                  ))}
+                </ol>
+              </div>
+            </div>
+          )}
         </div>
       ))}
     </div>
