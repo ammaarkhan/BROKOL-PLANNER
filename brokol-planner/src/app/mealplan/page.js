@@ -26,7 +26,7 @@ function MealPlan() {
 
   const categorizedList = categories.map((category) => ({
     category,
-    items: shoppingList.filter((item) => item.category === category),
+    items: shoppingList.filter((item) => item?.category === category),
   }));
 
   useEffect(() => {
@@ -53,7 +53,7 @@ function MealPlan() {
 
         if (!querySnapshot.empty) {
           const latestMealPlan = querySnapshot.docs[0].data();
-          setRecipeList(latestMealPlan.recipes);
+          setRecipeList(latestMealPlan.recipes || []);
           setShoppingList(latestMealPlan.shoppingList || []);
         } else {
           console.log("No meal plans found");
