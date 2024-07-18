@@ -52,7 +52,7 @@ function Recipes({ searchParams }) {
   const [preferences, setPreferences] = useState("");
 
   const prompt = `
-  Output ${breakfastMealsPerWeek} breakfast recipes and ${lunchDinnerMealsPerWeek} lunch/dinner recipes. I currently have these recipes in my plan: ${parsedFavoriteRecipes}. Assume I have have no precooked items. Give realistic preparation times please and don't output the same recipe twice. Consider the following preferences:
+  Output ${breakfastMealsPerWeek} breakfast recipes and ${lunchDinnerMealsPerWeek} lunch/dinner recipes. I already have these recipes in my plan for the week (so suggest different ones): ${parsedFavoriteRecipes}. Assume I have have no precooked items. Give realistic preparation times please and don't output the same recipe twice. Consider the following preferences:
     - Prep time: ${prepTime} minutes
     - Portions needed per meal: ${servingsPerMeal}
     - Dietary preferences: ${dietaryPreferences}
@@ -172,7 +172,7 @@ function Recipes({ searchParams }) {
     fetchRecipes();
   }, []);
 
-  const handleGenerateRecipes = async () => {
+  const handleGenerateMoreRecipes = async () => {
     logEvent(analytics, "more_recipes");
     setRecipesLoading(true);
     try {
@@ -220,7 +220,6 @@ function Recipes({ searchParams }) {
 
     const names = recipeList.map((recipe) => recipe.recipe.name);
     setRecipeNames(names);
-    // console.log("Recipe names:", names);
   }, [recipeList]);
 
   const saveMeals = async () => {
@@ -241,7 +240,7 @@ function Recipes({ searchParams }) {
   };
 
   const removeRecipe = (index) => {
-    logEvent(analytics, "recipe_removed");
+    logEvent(analytics, "recipe_removed_recipes_page");
     setDeletedRecipes((prevDeletedRecipes) => [
       ...prevDeletedRecipes,
       recipeList[index].recipe.name,
@@ -252,7 +251,7 @@ function Recipes({ searchParams }) {
   };
 
   const addFavorite = async (recipeData, index) => {
-    logEvent(analytics, "recipe_favorited");
+    logEvent(analytics, "recipe_favorited_recipes_page");
     try {
       await addFavoriteRecipe(uid, recipeData);
 
@@ -316,7 +315,7 @@ function Recipes({ searchParams }) {
                 placeholder="e.g. Give me more recipes that share ingredients with the recipes I currently have. I want a snack I can make quickly."
               />
               <button
-                onClick={handleGenerateRecipes}
+                onClick={handleGenerateMoreRecipes}
                 className="mt-2 py-2 px-4 bg-black w-full  text-white font-semibold rounded-md shadow-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
                 Generate 3 Recipes

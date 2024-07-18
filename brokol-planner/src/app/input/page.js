@@ -7,6 +7,8 @@ import { auth, db } from "../../config/firebase";
 import { signOut } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import useLogPage from "../hooks/useLogPage";
+import { analytics } from "../../config/firebase";
+import { logEvent } from "firebase/analytics";
 
 function Input() {
   const router = useRouter();
@@ -100,8 +102,10 @@ function Input() {
           dietaryPreferences: formData.dietaryPreferences.join(", "), // To convert from array to string
         }).toString();
         if (formData.selectFavRecipes === "Yes") {
+          logEvent(analytics, "select_fav_recipes_yes");
           router.push(`/selectfavrecipe?${params}`);
         } else {
+          logEvent(analytics, "select_fav_recipes_no");
           router.push(`/recipes?${params}`);
         }
       } catch (error) {
