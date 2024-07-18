@@ -47,7 +47,7 @@ function Recipes({ searchParams }) {
   const [deletedRecipes, setDeletedRecipes] = useState([]);
   const [recipeNames, setRecipeNames] = useState([]);
   const [uid, setUid] = useState(null);
-  const [moreRecipesLoading, setMoreRecipesLoading] = useState(false);
+  const [recipesLoading, setRecipesLoading] = useState(false);
   const [mealPlanLoading, setMealPlanLoading] = useState(false);
   const [preferences, setPreferences] = useState("");
 
@@ -138,24 +138,34 @@ function Recipes({ searchParams }) {
 
   useEffect(() => {
     const fetchRecipes = async () => {
-      const { output } = await generate(prompt);
+      setRecipesLoading(true);
+      try {
+        const { output } = await generate(prompt);
 
-      let accumulatedOutput = "";
-      let partialOutput = "";
+        let accumulatedOutput = "";
+        let partialOutput = "";
 
-      for await (const chunk of readStreamableValue(output)) {
-        accumulatedOutput += chunk;
-        partialOutput += chunk;
+        for await (const chunk of readStreamableValue(output)) {
+          accumulatedOutput += chunk;
+          partialOutput += chunk;
 
-        try {
-          const parsedRecipe = JSON.parse(partialOutput);
-          setRecipeList((prevRecipeList) => [...prevRecipeList, parsedRecipe]);
-          partialOutput = "";
-        } catch (error) {
-          // Ignore parsing errors until the data is fully accumulated
+          try {
+            const parsedRecipe = JSON.parse(partialOutput);
+            setRecipeList((prevRecipeList) => [
+              ...prevRecipeList,
+              parsedRecipe,
+            ]);
+            partialOutput = "";
+          } catch (error) {
+            // Ignore parsing errors until the data is fully accumulated
+          }
+
+          setOutputText(accumulatedOutput);
         }
-
-        setOutputText(accumulatedOutput);
+      } catch (error) {
+        console.error("Error generating more recipes:", error);
+      } finally {
+        setRecipesLoading(false);
       }
     };
 
@@ -164,7 +174,7 @@ function Recipes({ searchParams }) {
 
   const handleGenerateRecipes = async () => {
     logEvent(analytics, "more_recipes");
-    setMoreRecipesLoading(true);
+    setRecipesLoading(true);
     try {
       const { output } = await generate(promptTwo);
 
@@ -188,7 +198,7 @@ function Recipes({ searchParams }) {
     } catch (error) {
       console.error("Error generating more recipes:", error);
     } finally {
-      setMoreRecipesLoading(false);
+      setRecipesLoading(false);
     }
   };
 
@@ -272,7 +282,7 @@ function Recipes({ searchParams }) {
               removeRecipe={removeRecipe}
               addFavorite={addFavorite}
             />
-            {moreRecipesLoading && (
+            {recipesLoading && (
               <p className="flex justify-center text-md mt-3">
                 More recipes loading... lemme see what i can find for you :)
               </p>
