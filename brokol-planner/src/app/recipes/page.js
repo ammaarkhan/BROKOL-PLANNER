@@ -30,11 +30,15 @@ function Recipes({ searchParams }) {
     skillLevel,
     dietaryPreferences,
     weeklyFeeling,
-    favRecipes,
+    selectFavRecipes,
+    favoriteRecipes,
   } = searchParams;
 
-  const router = useRouter();
+  const parsedFavoriteRecipes = favoriteRecipes
+    ? JSON.parse(favoriteRecipes)
+    : [];
 
+  const router = useRouter();
 
   const [outputText, setOutputText] = useState("");
   const [recipeList, setRecipeList] = useState([]);
