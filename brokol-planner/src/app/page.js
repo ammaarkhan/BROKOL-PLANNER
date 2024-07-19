@@ -1,8 +1,9 @@
 "use client";
 
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import React, { useState } from "react";
-import { auth } from "../config/firebase";
+import { auth, db } from "../config/firebase";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
@@ -11,18 +12,24 @@ export default function Home() {
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  const signIn = (e) => {
+  const signIn = async (e) => {
     e.preventDefault();
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        router.push("/home");
-      })
-      .catch((error) => {
-        setError(
-          "Incorrect password. Contact hello@brokol.app if you need help :)"
-        );
-        console.log(error);
-      });
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      const userDocRef = doc(db, `users/${user.uid}`);
+
+      // Check if the email field is empty
+      const userDoc = await getDoc(userDocRef);
+      if (!userDoc.exists() || !userDoc.data().email) {
+        // Update the email field if empty
+        await setDoc(userDocRef, { email: user.email }, { merge: true });
+      }
+      router.push("/home");
+    } catch (error) {
+      setError("Incorrect password. Contact hello@brokol.app if you need help :)");
+      console.log(error);
+    }
   };
 
   return (
