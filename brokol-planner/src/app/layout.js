@@ -12,10 +12,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        {children}
-        <Script id="hotjar-script" strategy="afterInteractive">
-          {`
+      <body className={inter.className}>{children}</body>
+      <Script id="hotjar-script" strategy="afterInteractive">
+        {`
             (function(h,o,t,j,a,r){
                 h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
                 h._hjSettings={hjid:5065456,hjsv:6};
@@ -25,8 +24,7 @@ export default function RootLayout({ children }) {
                 a.appendChild(r);
             })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
           `}
-        </Script>
-      </body>
+      </Script>
     </html>
   );
 }
