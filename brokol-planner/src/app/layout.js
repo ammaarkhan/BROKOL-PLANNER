@@ -9,6 +9,8 @@ export const metadata = {
   description: "Simple and easy meal planner",
 };
 
+//
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
