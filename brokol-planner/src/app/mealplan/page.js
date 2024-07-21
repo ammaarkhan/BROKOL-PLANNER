@@ -155,7 +155,10 @@ function MealPlan() {
           </div>
         </div>
       ) : (
-        <p>No meal plan found.</p>
+        <p>
+          No meal plan found or please refresh the page if you just saved a meal
+          plan.
+        </p>
       )}
     </div>
   );
