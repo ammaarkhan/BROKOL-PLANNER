@@ -14,6 +14,7 @@ function SelectFavRecipes({ searchParams }) {
   const [favorites, setFavorites] = useState([]);
   const [selectedFavorites, setSelectedFavorites] = useState([]);
   const [uid, setUid] = useState(null);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -42,6 +43,8 @@ function SelectFavRecipes({ searchParams }) {
           setFavorites(favoriteRecipes);
         } catch (error) {
           console.error("Error fetching favorite recipes: ", error);
+        } finally {
+          setLoading(false);
         }
       };
 
@@ -72,15 +75,19 @@ function SelectFavRecipes({ searchParams }) {
   };
 
   return (
-    <div className="flex flex-col items-center my-4">
+    <div className="flex flex-col items-center my-4 min-h-screen">
       <h1 className="text-2xl mb-4 font-bold text-center mt-10">
         Select Your Favorite Recipes
       </h1>
-      <p className="flex justify-center text-lg">
+      <p className="flex justify-center text-lg text-center px-4">
         Select your favorite recipes that you would like to include in this
         week&apos;s meal plan.
       </p>
-      {favorites.length > 0 ? (
+      {loading ? (
+        <p className="flex justify-center text-lg mt-10">
+          Loading favorite recipes... please wait :)
+        </p>
+      ) : favorites.length > 0 ? (
         <div className="flex flex-col w-full max-w-4xl mt-6">
           <div className="w-full flex justify-center">
             <ul className="bg-white p-4 border-2 border-black rounded-xl shadow-sm">
@@ -101,7 +108,7 @@ function SelectFavRecipes({ searchParams }) {
           </div>
           <div className="flex justify-center gap-4 my-4">
             <button
-              className="bg-black text-white py-2 px-4 rounded-lg"
+              className="bg-black text-white py-2 px-4 rounded-lg mt-3"
               onClick={handleNextClick}
             >
               Next
@@ -109,9 +116,23 @@ function SelectFavRecipes({ searchParams }) {
           </div>
         </div>
       ) : (
-        <p className="flex justify-center text-lg mt-10">
-          Loading favorite recipes... please wait :)
-        </p>
+        <div className="flex flex-col items-center w-full max-w-2xl mt-20 flex-grow">
+          <p className="flex justify-center text-lg text-center px-4 mb-4 font-semibold">
+            Oh no, you have no favorite recipes yet!
+          </p>
+          <p className="flex justify-center text-md text-center px-4">
+            You can favorite recipes on the next page, or in the saved meal plan
+            page, those recipes will show up here next time!
+          </p>
+          <div className="flex justify-center gap-4 my-4 mt-20">
+            <button
+              className="bg-black text-white py-2 px-4 rounded-lg"
+              onClick={handleNextClick}
+            >
+              Next
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );
