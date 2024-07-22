@@ -18,13 +18,15 @@ export default function Home() {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       const userDocRef = doc(db, `users/${user.uid}`);
-
-      // Check if the email field is empty
+  
       const userDoc = await getDoc(userDocRef);
       if (!userDoc.exists() || !userDoc.data().email) {
-        // Update the email field if empty
         await setDoc(userDocRef, { email: user.email }, { merge: true });
       }
+  
+      // Update the last login time
+      await setDoc(userDocRef, { lastLogin: new Date() }, { merge: true });
+  
       router.push("/home");
     } catch (error) {
       setError("Incorrect password. Contact hello@brokol.app if you need help :)");
