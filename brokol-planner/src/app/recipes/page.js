@@ -337,8 +337,14 @@ function Recipes({ searchParams }) {
 
         {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-            <div className="bg-white p-8 rounded-lg shadow-lg text-center max-w-sm mx-auto">
-            
+            <div className="relative bg-white p-8 rounded-lg shadow-lg text-center max-w-sm mx-auto">
+            {/* Close Button */}
+            <button
+              className="absolute top-2 right-3 text-gray-500 hover:text-gray-700"
+              onClick={() => setIsModalOpen(false)}
+            >
+              &times;
+            </button>
             <p className="text-lg font-semibold mb-6">
                 Have you finalized your recipes? <br /> You won't be able to make changes to your meal plan on the next page.
             </p>
