@@ -346,7 +346,7 @@ function Recipes({ searchParams }) {
               &times;
             </button>
             <p className="text-lg font-semibold mb-6">
-                Have you finalized your recipes? <br /> You won't be able to make changes to your meal plan on the next page.
+                Have you finalized your recipes? <br /> You won&apos;t be able to make changes to your meal plan on the next page.
             </p>
             <div className="flex justify-center gap-4">
                 <button
