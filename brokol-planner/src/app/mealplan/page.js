@@ -40,13 +40,19 @@ function MealPlan() {
     items: shoppingList.filter((item) => item?.category === category),
   }));
 
+  // Function to update the shopping list based on new ingredients
+  const updateShoppingList = (updatedRecipes) => {
+    const updatedShoppingList = updatedRecipes.flatMap(recipe => recipe.recipe.ingredients);
+    setShoppingList(updatedShoppingList);
+  };
+
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUid(user.uid);
       } else {
-        // User is signed out
+      // User is signed out
         setUid(null);
       }
     });
@@ -78,7 +84,7 @@ function MealPlan() {
       fetchLatestMealPlan(uid);
     }
   }, [uid]);
-
+ 
   const addFavorite = async (recipeData, index) => {
     logEvent(analytics, "recipe_favorited_mealplan_page");
     try {
@@ -129,7 +135,7 @@ function MealPlan() {
       {recipeList.length > 0 ? (
         <div className="flex w-full max-w-6xl">
           <div className="w-4/6 pr-4">
-            <RecipesView recipeList={recipeList} addFavorite={addFavorite} />
+            <RecipesView recipeList={recipeList} addFavorite={addFavorite} updateShoppingList={updateShoppingList} />
           </div>
           <div className="w-2/6 pl-4">
             {shoppingList.length > 0 && (

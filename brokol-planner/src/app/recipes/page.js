@@ -50,6 +50,8 @@ function Recipes({ searchParams }) {
   const [recipesLoading, setRecipesLoading] = useState(false);
   const [mealPlanLoading, setMealPlanLoading] = useState(false);
   const [preferences, setPreferences] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
 
   const prompt = `
   Output ${breakfastMealsPerWeek} breakfast recipes and ${lunchDinnerMealsPerWeek} lunch/dinner recipes. I already have these recipes in my plan for the week (so suggest different ones): ${parsedFavoriteRecipes}. Assume I have have no precooked items. Give realistic preparation times please and don't output the same recipe twice. Consider the following preferences:
@@ -222,6 +224,10 @@ function Recipes({ searchParams }) {
     setRecipeNames(names);
   }, [recipeList]);
 
+  const handleSaveClick = () => {
+    setIsModalOpen(true);
+  };  
+
   const saveMeals = async () => {
     logEvent(analytics, "save_mealplan");
     setMealPlanLoading(true);
@@ -295,7 +301,7 @@ function Recipes({ searchParams }) {
               <div className="flex justify-center gap-4 my-4">
                 <button
                   className="bg-black text-white py-2 px-4 rounded-lg"
-                  onClick={saveMeals}
+                  onClick={handleSaveClick}
                 >
                   &rarr; Save Meal Plan
                 </button>
@@ -327,7 +333,43 @@ function Recipes({ searchParams }) {
         <p className="flex justify-center text-lg mt-10">
           Recipes loading... I promise I do not take too long :)
         </p>
-      )}
+    )}    
+
+        {isModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+            <div className="relative bg-white p-8 rounded-lg shadow-lg text-center max-w-sm mx-auto">
+            {/* Close Button */}
+            <button
+              className="absolute top-2 right-3 text-gray-500 hover:text-gray-700"
+              onClick={() => setIsModalOpen(false)}
+            >
+              &times;
+            </button>
+            <p className="text-lg font-semibold mb-6">
+                Have you finalized your recipes? <br /> You won&apos;t be able to make changes to your meal plan on the next page.
+            </p>
+            <div className="flex justify-center gap-4">
+                <button
+                className="border border-gray-600 py-2 px-4 rounded-lg text-gray-700 hover:bg-gray-100"
+                onClick={() => setIsModalOpen(false)}
+                >
+                No, need to edit.
+                </button>
+                <button
+                className="bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-800"
+                onClick={() => {
+                    setIsModalOpen(false);
+                    saveMeals();
+                }}
+                >
+                Yes, all set.
+                </button>
+            </div>
+            </div>
+        </div>
+        )}
+
+
     </div>
   );
 }
