@@ -84,7 +84,7 @@ function MealPlan() {
       fetchLatestMealPlan(uid);
     }
   }, [uid]);
-
+ 
   const addFavorite = async (recipeData, index) => {
     logEvent(analytics, "recipe_favorited_mealplan_page");
     try {
