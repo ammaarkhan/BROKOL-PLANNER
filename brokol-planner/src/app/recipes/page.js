@@ -17,13 +17,14 @@ import { logEvent } from "firebase/analytics";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../config/firebase";
 import Image from 'next/image';
-/* import userImage from '/user.png'; */
+import userImage from '../recipes/images/user.png';
 
 // Force the page to be dynamic and allow streaming responses up to 30 seconds
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 function Recipes({ searchParams }) {
+
   useLogPage();
 
   const {
@@ -282,6 +283,7 @@ function Recipes({ searchParams }) {
               recipeStream={recipeList}
               removeRecipe={removeRecipe}
               addFavorite={addFavorite}
+              setRecipeList={setRecipeList} // Pass setRecipeList to RecipesView
             />
             {recipesLoading && (
               <p className="flex justify-center text-md mt-3">
@@ -334,14 +336,19 @@ function Recipes({ searchParams }) {
   );
 }
 
-function RecipesView({ recipeStream, removeRecipe, addFavorite }) {
-  const [servings, setServings] = useState(recipeStream.map(() => 1)); // Initial servings
+function RecipesView({ recipeStream, removeRecipe, addFavorite, setRecipeList }) {
 
   const handleServingsChange = (index, newServings) => {
-    setServings((prevServings) =>
-      prevServings.map((serving, i) => (i === index ? newServings : serving))
+    setRecipeList((prevRecipeList) =>
+      prevRecipeList.map((recipe, i) => {
+        if (i === index) {
+          return { ...recipe, servings: newServings }; // Update servings for the specific recipe
+        }
+        return recipe;
+      })
     );
   };
+  
 
   return (
     <div className="flex flex-col gap-4 mt-4 max-w-4xl mx-auto">
@@ -379,16 +386,16 @@ function RecipesView({ recipeStream, removeRecipe, addFavorite }) {
             <div className="flex gap-4 items-center font-medium text-md inline-block">
               <span className="px-3 py-1 mb-2 bg-gray-200 rounded-md">Preparation Time: {recipeData.recipe?.prepTime} | Effort: {recipeData.recipe?.effort}</span>
               {/* Servings input */}
-              <div className="flex items-center">
-              <Image src="/user.png" width={24} height={24} />
-                <input
-                  type="number"
-                  id={`servings-${index}`}
-                  value={servings[index]}
-                  min={1}
-                  onChange={(e) => handleServingsChange(index, Number(e.target.value))}
-                  className="ml-2 w-12 p-1 border rounded text-center mb-2"
-                />
+              <div className="flex items-center justify-center">
+              <Image src={userImage} width={24} height={24} className="mb-2"/>
+              <input
+                type="number"
+                id={`servings-${index}`}
+                value={recipeData.servings || 1}  // Use recipeData.servings directly
+                min={1}
+                onChange={(e) => handleServingsChange(index, Number(e.target.value))}  // Update servings
+                className="justify-center ml-2 w-12 p-1 border rounded text-center mb-2"
+              />
               </div>
             </div>
 

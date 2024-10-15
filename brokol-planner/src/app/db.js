@@ -23,8 +23,15 @@ const saveRecipesAndShoppingList = async (uid, mealPlanId, recipeList) => {
   }
 
   const ingredients = recipeList
-    .map((recipe) => recipe.recipe.ingredients || [])
+    .map((recipe) => {
+      const servings = recipe.servings || 1; // Default to 1 serving if not provided
+      return recipe.recipe.ingredients.map((ingredient) => {
+        const amount = parseFloat(ingredient.amount) * servings; // Adjust the amount based on servings
+        return { ...ingredient, amount: amount }; // Don't fix the decimal places
+      });
+    })
     .flat();
+
 
   // Check if there are any ingredients
   if (ingredients.length === 0) {
@@ -38,16 +45,16 @@ const saveRecipesAndShoppingList = async (uid, mealPlanId, recipeList) => {
   const ingredientList = ingredients
     .map((ingredient) => `${ingredient.name} (${ingredient.amount})`)
     .join(", ");
-  const prompt = `Generate a shopping list with the added up quantity in imperial only for the following ingredients: ${ingredientList}. Return it as a JSON object in the format below:
-    [ 
-      { 
-        "name": "string",
-        "amount": "string",
-        "category": "string"
-      },
-    ]
-    The category should be one of these 6 options: "Produce (Fruit & Vegetables)", "Meat & Seafood", "Dairy & Eggs", "Bakery & Bread", "Dry Goods & Canned Foods", "Other".
-    `;
+    const prompt = `Generate a shopping list with the added up quantity in imperial only for the following ingredients: ${ingredientList}. Return it as a JSON object in the format below:
+      [ 
+        { 
+          "name": "string",
+          "amount": "string",
+          "category": "string"
+        },
+      ]
+      The category should be one of these 6 options: "Produce (Fruit & Vegetables)", "Meat & Seafood", "Dairy & Eggs", "Bakery & Bread", "Dry Goods & Canned Foods", "Other".
+      `;
 
   const output = await generateShoppingList(prompt);
   const cleanedOutput = output.replace(/```json|```/g, "").trim();
