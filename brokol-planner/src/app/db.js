@@ -32,7 +32,6 @@ const saveRecipesAndShoppingList = async (uid, mealPlanId, recipeList) => {
     })
     .flat();
 
-
   // Check if there are any ingredients
   if (ingredients.length === 0) {
     await updateDoc(doc(db, `users/${uid}/mealPlans/${mealPlanId}`), {
@@ -45,7 +44,7 @@ const saveRecipesAndShoppingList = async (uid, mealPlanId, recipeList) => {
   const ingredientList = ingredients
     .map((ingredient) => `${ingredient.name} (${ingredient.amount})`)
     .join(", ");
-    const prompt = `Generate a shopping list with the added up quantity in imperial only for the following ingredients: ${ingredientList}. Return it as a JSON object in the format below:
+  const prompt = `Generate a shopping list with the added up quantity in metric only for the following ingredients: ${ingredientList}. Return it as a JSON object in the format below:
       [ 
         { 
           "name": "string",
