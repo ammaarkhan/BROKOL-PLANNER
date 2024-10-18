@@ -18,9 +18,12 @@ import withAuth from "../firebase/withAuth";
 import useLogPage from "../hooks/useLogPage";
 import { analytics } from "../../config/firebase";
 import { logEvent } from "firebase/analytics";
+import Confetti from "react-confetti";
 
-function MealPlan() {
+function MealPlan({ searchParams }) {
   useLogPage();
+
+  const { confetti } = searchParams;
 
   const [recipeList, setRecipeList] = useState([]);
   const [shoppingList, setShoppingList] = useState([]);
@@ -120,6 +123,9 @@ function MealPlan() {
 
   return (
     <div className="flex flex-col items-center my-4">
+      {confetti === "true" ? (
+        <Confetti numberOfPieces={2500} recycle={false} />
+      ) : null}
       <button className="absolute left-4 bg-black text-white py-2 px-4 rounded-lg">
         <Link href="/home">Back</Link>
       </button>

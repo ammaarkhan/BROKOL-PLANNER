@@ -227,7 +227,7 @@ function Recipes({ searchParams }) {
     setMealPlanLoading(true);
     try {
       const mealPlanId = await saveMealPlanMetadata(uid);
-      router.push("/mealplan");
+      router.push(`/mealplan?confetti=true`);
 
       // Save the recipes and shopping list asynchronously
       await saveRecipesAndShoppingList(uid, mealPlanId, recipeList);
