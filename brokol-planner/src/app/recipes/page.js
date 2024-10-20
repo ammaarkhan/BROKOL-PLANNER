@@ -16,12 +16,15 @@ import { analytics } from "../../config/firebase";
 import { logEvent } from "firebase/analytics";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../config/firebase";
+import Image from 'next/image';
+import userImage from '../recipes/images/user.png';
 
 // Force the page to be dynamic and allow streaming responses up to 30 seconds
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 function Recipes({ searchParams }) {
+
   useLogPage();
 
   const {
@@ -280,6 +283,7 @@ function Recipes({ searchParams }) {
               recipeStream={recipeList}
               removeRecipe={removeRecipe}
               addFavorite={addFavorite}
+              setRecipeList={setRecipeList} // Pass setRecipeList to RecipesView
             />
             {recipesLoading && (
               <p className="flex justify-center text-md mt-3">
@@ -332,7 +336,20 @@ function Recipes({ searchParams }) {
   );
 }
 
-function RecipesView({ recipeStream, removeRecipe, addFavorite }) {
+function RecipesView({ recipeStream, removeRecipe, addFavorite, setRecipeList }) {
+
+  const handleServingsChange = (index, newServings) => {
+    setRecipeList((prevRecipeList) =>
+      prevRecipeList.map((recipe, i) => {
+        if (i === index) {
+          return { ...recipe, servings: newServings }; // Update servings for the specific recipe
+        }
+        return recipe;
+      })
+    );
+  };
+  
+
   return (
     <div className="flex flex-col gap-4 mt-4 max-w-4xl mx-auto">
       {recipeStream.map((recipeData, index) => (
@@ -342,7 +359,8 @@ function RecipesView({ recipeStream, removeRecipe, addFavorite }) {
         >
           <div className="flex items-center justify-between">
             <p className="font-bold text-xl">{recipeData.recipe?.name}</p>
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-center">
+              {/* Favorite and Delete buttons */}
               <button
                 onClick={() => addFavorite(recipeData, index)}
                 className={`${
@@ -362,36 +380,50 @@ function RecipesView({ recipeStream, removeRecipe, addFavorite }) {
               </button>
             </div>
           </div>
-          {!recipeData.manualAdd && (
-            <div className="flex-1">
-              <p className="font-medium text-md inline-block bg-gray-200 rounded-md px-3 py-1 mb-2">
-                Preparation Time: {recipeData.recipe?.prepTime} | Effort:{" "}
-                {recipeData.recipe?.effort}
-              </p>
-              <div className="mb-2">
-                <p className="font-bold mb-1">Ingredients:</p>
-                <ul className="list-disc list-inside text-gray-700">
-                  {recipeData.recipe?.ingredients?.map((ingredient, idx) => (
-                    <li key={idx}>
-                      {ingredient?.amount} {ingredient?.name}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <p className="font-bold mb-1">Recipe:</p>
-                <ol className="list-decimal list-inside text-gray-700">
-                  {recipeData.recipe?.steps?.map((step, idx) => (
-                    <li key={idx}>{step}</li>
-                  ))}
-                </ol>
+
+          {/* Recipe details */}
+          <div className="flex-1">
+            <div className="flex gap-4 items-center font-medium text-md inline-block">
+              <span className="px-3 py-1 mb-2 bg-gray-200 rounded-md">Preparation Time: {recipeData.recipe?.prepTime} | Effort: {recipeData.recipe?.effort}</span>
+              {/* Servings input */}
+              <div className="flex items-center justify-center">
+              <Image src={userImage} width={24} height={24} className="mb-2"/>
+              <input
+                type="number"
+                id={`servings-${index}`}
+                value={recipeData.servings || 1}  // Use recipeData.servings directly
+                min={1}
+                onChange={(e) => handleServingsChange(index, Number(e.target.value))}  // Update servings
+                className="justify-center ml-2 w-12 p-1 border rounded text-center mb-2"
+              />
               </div>
             </div>
-          )}
+
+            <div className="mb-2">
+              <p className="font-bold mb-1">Ingredients:</p>
+              <ul className="list-disc list-inside text-gray-700">
+                {recipeData.recipe?.ingredients?.map((ingredient, idx) => (
+                  <li key={idx}>
+                    {ingredient?.amount} {ingredient?.name}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <p className="font-bold mb-1">Recipe:</p>
+              <ol className="list-decimal list-inside text-gray-700">
+                {recipeData.recipe?.steps?.map((step, idx) => (
+                  <li key={idx}>{step}</li>
+                ))}
+              </ol>
+            </div>
+          </div>
         </div>
       ))}
     </div>
   );
 }
+
 
 export default withAuth(Recipes);
