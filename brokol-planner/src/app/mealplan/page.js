@@ -18,6 +18,8 @@ import withAuth from "../firebase/withAuth";
 import useLogPage from "../hooks/useLogPage";
 import { analytics } from "../../config/firebase";
 import { logEvent } from "firebase/analytics";
+import Image from 'next/image';
+import userImage from '../recipes/images/user.png';
 
 function MealPlan() {
   useLogPage();
@@ -188,36 +190,50 @@ function RecipesView({ recipeList, addFavorite }) {
               </button>
             </div>
           </div>
-          {!recipeData.manualAdd && (
-            <div className="flex-1 space-y-2">
-              <p className="font-medium text-md inline-block bg-gray-200 rounded-md px-3 py-1 mb-2">
-                Preparation Time: {recipeData.recipe?.prepTime} | Effort:{" "}
-                {recipeData.recipe?.effort}
-              </p>
-              <div>
-                <p className="font-bold mb-1">Ingredients:</p>
-                <ul className="list-disc list-inside text-gray-700">
-                  {recipeData.recipe?.ingredients?.map((ingredient, idx) => (
-                    <li key={idx}>
-                      {ingredient?.amount} {ingredient?.name}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <p className="font-bold mb-1">Recipe:</p>
-                <ol className="list-decimal list-inside text-gray-700">
-                  {recipeData.recipe?.steps?.map((step, idx) => (
-                    <li key={idx}>{step}</li>
-                  ))}
-                </ol>
+
+          {/* Display Recipe Details */}
+          <div className="flex-1">
+            <div className="flex gap-4 items-center font-medium text-md inline-block">
+              <span className="px-3 py-1 mb-2 bg-gray-200 rounded-md">Preparation Time: {recipeData.recipe?.prepTime} | Effort: {recipeData.recipe?.effort}</span>
+              {/* Servings input */}
+                <div className="flex items-center justify-center">
+                <Image src={userImage} width={24} height={24} className="mb-2" />
+                <input
+                  type="number"
+                  id={`servings-${index}`}
+                  value={recipeData.servings || 1}  // Use recipeData.servings directly
+                  min={1}
+                  className="justify-center w-12 p-1 border rounded text-center mb-2"
+                  readOnly  // Make it read-only
+                />
               </div>
             </div>
-          )}
+
+
+            <div>
+              <p className="font-bold mb-1">Ingredients:</p>
+              <ul className="list-disc list-inside text-gray-700">
+                {recipeData.recipe?.ingredients?.map((ingredient, idx) => (
+                  <li key={idx}>
+                    {ingredient?.amount} {ingredient?.name}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <p className="font-bold mb-1">Recipe:</p>
+              <ol className="list-decimal list-inside text-gray-700">
+                {recipeData.recipe?.steps?.map((step, idx) => (
+                  <li key={idx}>{step}</li>
+                ))}
+              </ol>
+            </div>
+          </div>
         </div>
       ))}
     </div>
   );
 }
+
 
 export default withAuth(MealPlan);

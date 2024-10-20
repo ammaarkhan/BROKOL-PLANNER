@@ -22,12 +22,19 @@ const saveRecipesAndShoppingList = async (uid, mealPlanId, recipeList) => {
     throw new Error("User is not authenticated!");
   }
 
-  const ingredients = recipeList
+  // Add servings to the recipeList to be saved
+  const recipesWithServings = recipeList.map((recipe) => ({
+    ...recipe,
+    servings: recipe.servings || 1, // Ensure that servings are saved with each recipe
+  }));
+
+  // Adjust the ingredients based on the servings
+  const ingredients = recipesWithServings
     .map((recipe) => {
-      const servings = recipe.servings || 1; // Default to 1 serving if not provided
+      const servings = recipe.servings || 1; // Use the servings value from each recipe
       return recipe.recipe.ingredients.map((ingredient) => {
-        const amount = parseFloat(ingredient.amount) * servings; // Adjust the amount based on servings
-        return { ...ingredient, amount: amount }; // Don't fix the decimal places
+        const amount = parseFloat(ingredient.amount) * servings; // Adjust the ingredient amount based on servings
+        return { ...ingredient, amount: amount }; // Ensure amounts are saved correctly
       });
     })
     .flat();
@@ -35,7 +42,7 @@ const saveRecipesAndShoppingList = async (uid, mealPlanId, recipeList) => {
   // Check if there are any ingredients
   if (ingredients.length === 0) {
     await updateDoc(doc(db, `users/${uid}/mealPlans/${mealPlanId}`), {
-      recipes: recipeList,
+      recipes: recipesWithServings, // Save the recipes with servings
       shoppingList: [], // Set shopping list to an empty array if no ingredients
     });
     return;
@@ -44,6 +51,8 @@ const saveRecipesAndShoppingList = async (uid, mealPlanId, recipeList) => {
   const ingredientList = ingredients
     .map((ingredient) => `${ingredient.name} (${ingredient.amount})`)
     .join(", ");
+  
+  // Ensure that the prompt generates a shopping list in the required format
   const prompt = `Generate a shopping list with the added up quantity in metric only for the following ingredients: ${ingredientList}. Return it as a JSON object in the format below:
       [ 
         { 
@@ -59,11 +68,13 @@ const saveRecipesAndShoppingList = async (uid, mealPlanId, recipeList) => {
   const cleanedOutput = output.replace(/```json|```/g, "").trim();
   const shoppingList = JSON.parse(cleanedOutput);
 
+  // Save the updated meal plan, including recipes and the generated shopping list
   await updateDoc(doc(db, `users/${uid}/mealPlans/${mealPlanId}`), {
-    recipes: recipeList,
+    recipes: recipesWithServings, // Save the recipes with servings included
     shoppingList,
   });
 };
+
 
 const addFavoriteRecipe = async (uid, recipe) => {
   if (!uid) {
